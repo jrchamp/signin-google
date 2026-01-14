@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Check out source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
 
       - name: Check existence of composer.json file
         id: check_files
@@ -67,7 +67,7 @@ jobs:
 
     steps:
       - name: Check out gh-reports repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
         with:
           repository: rtCamp/gh-reports.rt.gw
           token: ${{ secrets.RTBOT_TOKEN }}
