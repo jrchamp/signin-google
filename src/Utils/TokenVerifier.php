@@ -119,7 +119,7 @@ class TokenVerifier {
 	}
 
 	/**
-	 * Base64 URL Encode a string.
+	 * Base64 URL Decode a string.
 	 *
 	 * @param string $str Input string to decode.
 	 *
