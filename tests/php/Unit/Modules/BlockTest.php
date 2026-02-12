@@ -46,14 +46,14 @@ class BlockTest extends TestCase {
 	 */
 	public function setUp(): void {
 		$this->ghClientMock = $this->createMock( GoogleClient::class );
-		$this->assetMock       = $this->createMock( Assets::class );
-		$this->testee           = new Testee( $this->assetMock, $this->ghClientMock );
+		$this->assetMock    = $this->createMock( Assets::class );
+		$this->testee       = new Testee( $this->assetMock, $this->ghClientMock );
 	}
 
 	public function tearDown(): void {
 		parent::tearDown();
 		$this->ghClientMock = null;
-		$this->assetMock       = null;
+		$this->assetMock    = null;
 		unset( $this->testee );
 	}
 
@@ -72,9 +72,9 @@ class BlockTest extends TestCase {
 	 * @covers ::init
 	 */
 	public function testInit() {
-		WP_Mock::expectActionAdded( 'wp_enqueue_scripts', [ $this->testee->assets, 'register_login_styles' ] );
-		WP_Mock::expectActionAdded( 'enqueue_block_editor_assets', [ $this->testee, 'enqueue_block_editor_assets' ] );
-		WP_Mock::expectActionAdded( 'init', [ $this->testee, 'register' ] );
+		WP_Mock::expectActionAdded( 'wp_enqueue_scripts', array( $this->testee->assets, 'register_login_styles' ) );
+		WP_Mock::expectActionAdded( 'enqueue_block_editor_assets', array( $this->testee, 'enqueue_block_editor_assets' ) );
+		WP_Mock::expectActionAdded( 'init', array( $this->testee, 'register' ) );
 
 		$this->testee->init();
 		$this->assertConditionsMet();
@@ -88,46 +88,46 @@ class BlockTest extends TestCase {
 
 		WP_Mock::userFunction(
 			'trailingslashit',
-			[
+			array(
 				'times'      => 1,
-				'args'       => [ $path ],
+				'args'       => array( $path ),
 				'return_arg' => 0,
-			]
+			)
 		);
 
 		$this->wpMockFunction(
 			'RtCamp\GoogleLogin\plugin',
-			[],
+			array(),
 			1,
 			function () use ( $path ) {
-				return (object) [
+				return (object) array(
 					'url'        => 'https://example.com/',
 					'assets_dir' => $path,
-				];
+				);
 			}
 		);
 
 		$this->wpMockFunction(
 			'wp_enqueue_script',
-			[ 'google-login-block' ],
+			array( 'google-login-block' ),
 			1,
 			true
 		);
 
 		$this->assetMock->expects( $this->once() )->method( 'register_login_styles' );
 		$this->assetMock->expects( $this->once() )->method( 'register_script' )
-		                 ->with(
-			                 'google-login-block',
-			                 'build/js/block-button.js',
-			                 [
-				                 'wp-blocks',
-				                 'wp-element',
-				                 'wp-editor',
-				                 'wp-components',
-			                 ],
-			                 filemtime( $path . 'build/js/block-button.js' ),
-			                 false
-		                 );
+			->with(
+				'google-login-block',
+				'build/js/block-button.js',
+				array(
+					'wp-blocks',
+					'wp-element',
+					'wp-editor',
+					'wp-components',
+				),
+				filemtime( $path . 'build/js/block-button.js' ),
+				false
+			);
 
 		$this->testee->enqueue_block_editor_assets();
 	}
@@ -138,23 +138,23 @@ class BlockTest extends TestCase {
 	public function testRegister() {
 		$this->wpMockFunction(
 			'register_block_type',
-			[
+			array(
 				'google-login/login-button',
-				[
+				array(
 					'editor_style'    => 'login-with-google',
 					'style'           => 'login-with-google',
-					'render_callback' => [ $this->testee, 'render_login_button' ],
-					'attributes'      => [
-						'buttonText'   => [
+					'render_callback' => array( $this->testee, 'render_login_button' ),
+					'attributes'      => array(
+						'buttonText'   => array(
 							'type' => 'string',
-						],
-						'forceDisplay' => [
+						),
+						'forceDisplay' => array(
 							'type'    => 'boolean',
 							'default' => false,
-						],
-					],
-				],
-			],
+						),
+					),
+				),
+			),
 			1,
 			true
 		);
@@ -169,29 +169,29 @@ class BlockTest extends TestCase {
 	 * @covers ::render_login_button, ::markup
 	 */
 	public function testRenderLoginButton() {
-		$mockAttributes = [
+		$mockAttributes = array(
 			'login_url'       => '#',
 			'custom_btn_text' => 'test',
 			'force_display'   => false,
-		];
+		);
 
 		$this->wpMockFunction(
 			'is_user_logged_in',
-			[],
+			array(),
 			1,
 			false
 		);
 
 		$this->wpMockFunction(
 			'wp_parse_args',
-			[],
+			array(),
 			1,
 			$mockAttributes
 		);
 
 		$this->wpMockFunction(
 			'wp_kses_post',
-			[],
+			array(),
 			1,
 			''
 		);
@@ -200,40 +200,39 @@ class BlockTest extends TestCase {
 
 		$this->wpMockFunction(
 			'RtCamp\GoogleLogin\plugin',
-			[],
+			array(),
 			1,
 			function () use ( $path ) {
-				return (object) [
+				return (object) array(
 					'template_dir' => $path,
-				];
+				);
 			}
 		);
 
 		WP_Mock::userFunction(
 			'trailingslashit',
-			[
+			array(
 				'times'      => 1,
-				'args'       => [ $path ],
+				'args'       => array( $path ),
 				'return_arg' => 0,
-			]
+			)
 		);
-
 
 		$helperMock = \Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'render_template' )->once()->withArgs(
-			[
+			array(
 				$path . 'google-login-button.php',
 				$mockAttributes,
 				false,
-			]
+			)
 		)->andReturn( '' );
 
 		$markup = $this->testee->render_login_button(
-			[
+			array(
 				$path . '/google-login-button.php',
 				$mockAttributes,
 				false,
-			]
+			)
 		);
 
 		$this->assertConditionsMet();
@@ -243,29 +242,29 @@ class BlockTest extends TestCase {
 	 * @covers ::render_login_button, ::markup
 	 */
 	public function testRenderLogoutButton() {
-		$mockAttributes = [
+		$mockAttributes = array(
 			'login_url'       => '#',
 			'custom_btn_text' => 'test',
 			'force_display'   => true,
-		];
+		);
 
 		$this->wpMockFunction(
 			'is_user_logged_in',
-			[],
+			array(),
 			1,
 			false
 		);
 
 		$this->wpMockFunction(
 			'wp_parse_args',
-			[],
+			array(),
 			1,
 			$mockAttributes
 		);
 
 		$this->wpMockFunction(
 			'wp_kses_post',
-			[],
+			array(),
 			1,
 			''
 		);
@@ -274,43 +273,41 @@ class BlockTest extends TestCase {
 
 		$this->wpMockFunction(
 			'RtCamp\GoogleLogin\plugin',
-			[],
+			array(),
 			1,
 			function () use ( $path ) {
-				return (object) [
+				return (object) array(
 					'template_dir' => $path,
-				];
+				);
 			}
 		);
 
 		WP_Mock::userFunction(
 			'trailingslashit',
-			[
+			array(
 				'times'      => 1,
-				'args'       => [ $path ],
+				'args'       => array( $path ),
 				'return_arg' => 0,
-			]
+			)
 		);
-
 
 		$helperMock = \Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'render_template' )->once()->withArgs(
-			[
+			array(
 				$path . 'google-login-button.php',
 				$mockAttributes,
 				false,
-			]
+			)
 		)->andReturn( '' );
 
 		$markup = $this->testee->render_login_button(
-			[
+			array(
 				$path . '/google-login-button.php',
 				$mockAttributes,
 				false,
-			]
+			)
 		);
 
 		$this->assertConditionsMet();
 	}
 }
-

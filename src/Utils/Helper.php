@@ -33,7 +33,7 @@ class Helper {
 	 *
 	 * @return string
 	 */
-	public static function render_template( $template_path, $variables = [], $should_echo = true ) {
+	public static function render_template( $template_path, $variables = array(), $should_echo = true ) {
 
 		$validate_file = validate_file( $template_path );
 		// Function validate_file returns 2 for Windows drive path, so we check that as well.
@@ -243,7 +243,7 @@ class Helper {
 
 		self::$redirection_url = $redirect_to;
 
-		add_filter( 'rtcamp.google_login_state', [ __CLASS__, 'update_redirect_state' ] );
+		add_filter( 'rtcamp.google_login_state', array( __CLASS__, 'update_redirect_state' ) );
 	}
 
 	/**
@@ -269,6 +269,6 @@ class Helper {
 	 * @return void
 	 */
 	public static function remove_redirect_state_filter() {
-		remove_filter( 'rtcamp.google_login_state', [ __CLASS__, 'update_redirect_state' ] );
+		remove_filter( 'rtcamp.google_login_state', array( __CLASS__, 'update_redirect_state' ) );
 	}
 }

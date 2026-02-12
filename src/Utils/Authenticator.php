@@ -103,13 +103,13 @@ class Authenticator {
 			$whitelisted_domains = $this->settings->whitelisted_domains;
 			if ( empty( $whitelisted_domains ) || $this->can_register_with_email( $user->email ) ) {
 				$uid = wp_insert_user(
-					[
+					array(
 						'user_login' => Helper::unique_username( $user->login ),
 						'user_pass'  => wp_generate_password( 18 ),
 						'user_email' => $user->email,
 						'first_name' => $user->given_name ?? '',
 						'last_name'  => $user->family_name ?? '',
-					]
+					)
 				);
 
 				/**

@@ -61,14 +61,14 @@ class SettingsTest extends TestCase {
 	public function testGetWithProper() {
 		$this->wpMockFunction(
 			'get_option',
-			[
+			array(
 				'wp_google_login_settings',
-				[]
-			],
+				array(),
+			),
 			1,
-			[
-				'client_id' => 'cid'
-			]
+			array(
+				'client_id' => 'cid',
+			)
 		);
 
 		$this->testee->init();
@@ -82,16 +82,16 @@ class SettingsTest extends TestCase {
 	public function testInit() {
 		$this->wpMockFunction(
 			'get_option',
-			[
+			array(
 				'wp_google_login_settings',
-				[]
-			],
+				array(),
+			),
 			1,
-			[]
+			array()
 		);
 
-		WP_Mock::expectActionAdded( 'admin_init', [ $this->testee, 'register_settings' ] );
-		WP_Mock::expectActionAdded( 'admin_menu', [ $this->testee, 'settings_page' ] );
+		WP_Mock::expectActionAdded( 'admin_init', array( $this->testee, 'register_settings' ) );
+		WP_Mock::expectActionAdded( 'admin_menu', array( $this->testee, 'settings_page' ) );
 
 		$this->testee->init();
 		$this->assertConditionsMet();
@@ -103,38 +103,38 @@ class SettingsTest extends TestCase {
 	public function testRegisterSettings() {
 		$this->wpMockFunction(
 			'register_setting',
-			[
+			array(
 				'wp_google_login',
-				'wp_google_login_settings'
-			],
+				'wp_google_login_settings',
+			),
 			1,
 			true
 		);
 
 		$this->wpMockFunction(
 			'add_settings_section',
-			[
+			array(
 				'wp_google_login_section',
 				'Log in with Google Settings',
 				\Closure::class,
-				'login-with-google'
-			],
+				'login-with-google',
+			),
 			1
 		);
 
 		WP_Mock::userFunction(
 			'add_settings_field',
-			[
-				'args'  => [
+			array(
+				'args'  => array(
 					\WP_Mock\Functions::type( 'string' ),
 					\WP_Mock\Functions::type( 'string' ),
 					\WP_Mock\Functions::type( 'callable' ),
 					\WP_Mock\Functions::type( 'string' ),
 					\WP_Mock\Functions::type( 'string' ),
 					\WP_Mock\Functions::type( 'array' ),
-				],
-				'times' => 6
-			]
+				),
+				'times' => 6,
+			)
 		);
 
 		$this->testee->register_settings();
@@ -147,16 +147,16 @@ class SettingsTest extends TestCase {
 	public function testSettingsPage() {
 		$this->wpMockFunction(
 			'add_options_page',
-			[
+			array(
 				'Login with Google settings',
 				'Login with Google',
 				'manage_options',
 				'login-with-google',
-				[
+				array(
 					$this->testee,
-					'output'
-				],
-			]
+					'output',
+				),
+			)
 		);
 
 		$this->testee->settings_page();
@@ -169,28 +169,28 @@ class SettingsTest extends TestCase {
 	public function testOutput() {
 		$this->wpMockFunction(
 			'settings_fields',
-			[
+			array(
 				'wp_google_login',
-			],
+			),
 			1
 		);
 
 		$this->wpMockFunction(
 			'do_settings_sections',
-			[
+			array(
 				'login-with-google',
-			],
+			),
 			1
 		);
 
 		$this->wpMockFunction(
 			'submit_button',
-			[],
+			array(),
 			1,
 			''
 		);
 
-		$this->setOutputCallback(function() {});
+		$this->setOutputCallback( function () {} );
 		$this->testee->output();
 		$this->assertConditionsMet();
 	}
@@ -201,27 +201,27 @@ class SettingsTest extends TestCase {
 	public function testClientIdField() {
 		$this->wpMockFunction(
 			'esc_html__',
-			[
+			array(
 				'Create oAuth Client ID and Client Secret at',
-				'login-with-google'
-			],
+				'login-with-google',
+			),
 			2,
 		);
 
 		$this->wpMockFunction(
 			'wp_kses_post',
-			[
+			array(
 				sprintf(
 					'<p>%1s <a target="_blank" href="%2s">%3s</a>.</p>',
 					esc_html__( 'Create oAuth Client ID and Client Secret at', 'login-with-google' ),
 					'https://console.developers.google.com/apis/dashboard',
 					'console.developers.google.com'
-				)
-			],
+				),
+			),
 			1,
 		);
 
-		$this->setOutputCallback(function() {});
+		$this->setOutputCallback( function () {} );
 		$this->testee->client_id_field();
 		$this->assertConditionsMet();
 	}
@@ -234,38 +234,38 @@ class SettingsTest extends TestCase {
 
 		$this->wpMockFunction(
 			'checked',
-			[
-				'yes'
-			],
+			array(
+				'yes',
+			),
 			1,
 		);
 
 		$this->wpMockFunction(
 			'esc_html_e',
-			[
+			array(
 				'Create a new user account if it does not exist already',
-				'login-with-google'
-			],
+				'login-with-google',
+			),
 			1,
 		);
 
 		$this->wpMockFunction(
 			'is_multisite',
-			[],
+			array(),
 			1,
 			'network/settings.php'
 		);
 
 		$this->wpMockFunction(
 			'wp_kses_post',
-			[
+			array(
 				/* translators: %1s will be replaced by page link */
 				__( 'If this setting is checked, a new user will be created even if <a target="_blank" href="network/settings.php">membership setting</a> is off.', 'login-with-google' ),
-			],
+			),
 			1,
 		);
 
-		$this->setOutputCallback(function() {});
+		$this->setOutputCallback( function () {} );
 		$this->testee->user_registration();
 		$this->assertConditionsMet();
 	}
@@ -278,21 +278,21 @@ class SettingsTest extends TestCase {
 
 		$this->wpMockFunction(
 			'esc_attr',
-			[
+			array(
 				'https://example1.com,https://example2.com',
-			],
+			),
 			1,
 		);
 
 		$this->wpMockFunction(
 			'esc_html',
-			[
-				__( 'Add each domain comma separated', 'login-with-google' )
-			],
+			array(
+				__( 'Add each domain comma separated', 'login-with-google' ),
+			),
 			1,
 		);
 
-		$this->setOutputCallback(function() {});
+		$this->setOutputCallback( function () {} );
 		$this->testee->whitelisted_domains();
 		$this->assertConditionsMet();
 	}
@@ -304,15 +304,14 @@ class SettingsTest extends TestCase {
 		$this->testee->client_secret = 'cis';
 		$this->wpMockFunction(
 			'esc_attr',
-			[
-				'cis'
-			],
+			array(
+				'cis',
+			),
 			1
 		);
 
-		$this->setOutputCallback(function() {});
+		$this->setOutputCallback( function () {} );
 		$this->testee->client_secret_field();
 		$this->assertConditionsMet();
 	}
-
 }

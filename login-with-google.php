@@ -24,10 +24,10 @@ use Pimple\Container as PimpleContainer;
 // Prevent direct access.
 defined( 'ABSPATH' ) || exit;
 
-$hooks = [
+$hooks = array(
 	'admin_notices',
 	'network_admin_notices',
-];
+);
 
 /**
  * PHP 7.4+ is required in order to use the plugin.
@@ -48,7 +48,7 @@ if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {
 						'The plugin Login with google has been deactivated',
 						'login-with-google'
 					),
-					wp_kses( $message, [ 'br' => true ] )
+					wp_kses( $message, array( 'br' => true ) )
 				);
 
 				deactivate_plugins( plugin_basename( __FILE__ ) );

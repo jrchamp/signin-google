@@ -115,11 +115,11 @@ class Container implements ContainerInterface {
 			$settings = $c['settings'];
 
 			return new GoogleClient(
-				[
+				array(
 					'client_id'     => $settings->client_id,
 					'client_secret' => $settings->client_secret,
 					'redirect_uri'  => wp_login_url(),
-				]
+				)
 			);
 		};
 
@@ -188,7 +188,6 @@ class Container implements ContainerInterface {
 		$this->container['google_login_block'] = function ( PimpleContainer $c ) {
 			return new Block( $c['assets'], $c['gh_client'] );
 		};
-
 
 		/**
 		 * Define any additional services.

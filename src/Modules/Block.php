@@ -77,7 +77,7 @@ class Block implements Module {
 		/**
 		 * Actions.
 		 */
-		add_action( 'init', [ $this, 'register' ] );
+		add_action( 'init', array( $this, 'register' ) );
 
 		/**
 		 * Filters.
@@ -101,9 +101,9 @@ class Block implements Module {
 
 		register_block_type(
 			trailingslashit( plugin()->assets_dir ) . 'build/blocks/login-button',
-			[
-				'render_callback' => [ $this, 'render_login_button' ],
-			]
+			array(
+				'render_callback' => array( $this, 'render_login_button' ),
+			)
 		);
 	}
 
@@ -139,11 +139,11 @@ class Block implements Module {
 			apply_filters( 'rtcamp.google_login_button_display', false )
 		) {
 			$markup = $this->markup(
-				[
+				array(
 					'login_url'       => $this->client->authorization_url(),
 					'custom_btn_text' => $attributes['buttonText'] ?? '',
 					'force_display'   => $force_display,
-				]
+				)
 			);
 
 			ob_start();
@@ -168,14 +168,14 @@ class Block implements Module {
 	 *
 	 * @return string
 	 */
-	private function markup( array $args = [] ): string {
+	private function markup( array $args = array() ): string {
 		$args = wp_parse_args(
 			$args,
-			[
+			array(
 				'login_url'       => '#',
 				'custom_btn_text' => '',
 				'force_display'   => false,
-			]
+			)
 		);
 
 		$template = trailingslashit( plugin()->template_dir ) . 'google-login-button.php';

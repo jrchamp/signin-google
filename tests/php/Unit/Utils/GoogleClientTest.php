@@ -32,10 +32,12 @@ class GoogleClientTest extends TestCase {
 	 * @return void
 	 */
 	public function setUp(): void {
-		$this->testee = new Testee( [
-			'client_id'     => 'cid',
-			'client_secret' => 'csc',
-		] );
+		$this->testee = new Testee(
+			array(
+				'client_id'     => 'cid',
+				'client_secret' => 'csc',
+			)
+		);
 	}
 
 	/**
@@ -85,49 +87,49 @@ class GoogleClientTest extends TestCase {
 
 		$this->wpMockFunction(
 			'wp_remote_post',
-			[
+			array(
 				'https://oauth2.googleapis.com/token',
-				[
-					'headers' => [
+				array(
+					'headers' => array(
 						'Accept' => 'application/json',
-					],
-					'body'    => [
+					),
+					'body'    => array(
 						'client_id'     => 'cid',
 						'client_secret' => 'csc',
 						'redirect_uri'  => '',
 						'code'          => 'abc',
 						'grant_type'    => 'authorization_code',
-					],
-				]
-			],
+					),
+				),
+			),
 			1,
 			'response'
 		);
 
 		$this->wpMockFunction(
 			'wp_remote_retrieve_response_code',
-			[
-				'response'
-			],
+			array(
+				'response',
+			),
 			1,
 			200
 		);
 
 		$this->wpMockFunction(
 			'wp_remote_retrieve_body',
-			[
+			array(
 				'response',
-			],
+			),
 			1,
-			function() {
-				$token = (object) [
-					'access_token' => 'AccessToken'
-				];
+			function () {
+				$token = (object) array(
+					'access_token' => 'AccessToken',
+				);
 				return json_encode( $token );
 			}
 		);
 
-		$obj = $this->testee->set_access_token( 'abc' );
+		$obj   = $this->testee->set_access_token( 'abc' );
 		$token = $this->getTesteeProperty( 'access_token', $this->testee );
 
 		$this->assertSame( $this->testee, $obj );
@@ -143,30 +145,30 @@ class GoogleClientTest extends TestCase {
 
 		$this->wpMockFunction(
 			'wp_remote_post',
-			[
+			array(
 				'https://oauth2.googleapis.com/token',
-				[
-					'headers' => [
+				array(
+					'headers' => array(
 						'Accept' => 'application/json',
-					],
-					'body'    => [
+					),
+					'body'    => array(
 						'client_id'     => 'cid',
 						'client_secret' => 'csc',
 						'redirect_uri'  => '',
 						'code'          => 'abc',
 						'grant_type'    => 'authorization_code',
-					],
-				]
-			],
+					),
+				),
+			),
 			1,
 			'response'
 		);
 
 		$this->wpMockFunction(
 			'wp_remote_retrieve_response_code',
-			[
-				'response'
-			],
+			array(
+				'response',
+			),
 			1,
 			400
 		);
@@ -179,7 +181,7 @@ class GoogleClientTest extends TestCase {
 	 * @covers ::access_token
 	 */
 	public function testAccessTokenThrowsExceptionForNon200Code() {
-		$ghClient = $this->createPartialMock( Testee::class, [ 'gt_redirect_url' ] );
+		$ghClient = $this->createPartialMock( Testee::class, array( 'gt_redirect_url' ) );
 		$ghClient->expects( $this->once() )->method( 'gt_redirect_url' )->willReturn( '' );
 
 		$ghClient->client_id     = 'cid';
@@ -187,30 +189,30 @@ class GoogleClientTest extends TestCase {
 
 		$this->wpMockFunction(
 			'wp_remote_post',
-			[
+			array(
 				'https://oauth2.googleapis.com/token',
-				[
-					'headers' => [
+				array(
+					'headers' => array(
 						'Accept' => 'application/json',
-					],
-					'body'    => [
+					),
+					'body'    => array(
 						'client_id'     => 'cid',
 						'client_secret' => 'csc',
 						'redirect_uri'  => '',
 						'code'          => 'abc',
 						'grant_type'    => 'authorization_code',
-					],
-				]
-			],
+					),
+				),
+			),
 			1,
 			'response'
 		);
 
 		$this->wpMockFunction(
 			'wp_remote_retrieve_response_code',
-			[
-				'response'
-			],
+			array(
+				'response',
+			),
 			1,
 			400
 		);
@@ -227,47 +229,47 @@ class GoogleClientTest extends TestCase {
 
 		$this->wpMockFunction(
 			'trailingslashit',
-			[
-				'https://www.googleapis.com'
-			],
+			array(
+				'https://www.googleapis.com',
+			),
 			1,
 			'https://www.googleapis.com/'
 		);
 
 		$this->wpMockFunction(
 			'wp_remote_get',
-			[
+			array(
 				'https://www.googleapis.com/oauth2/v2/userinfo?access_token=someToken',
-				[
-					'headers' => [
+				array(
+					'headers' => array(
 						'Accept' => 'application/json',
-					],
-				]
-			],
+					),
+				),
+			),
 			1,
 			'response'
 		);
 
 		$this->wpMockFunction(
 			'wp_remote_retrieve_response_code',
-			[
-				'response'
-			],
+			array(
+				'response',
+			),
 			1,
 			200
 		);
 
 		$this->wpMockFunction(
 			'wp_remote_retrieve_body',
-			[
+			array(
 				'response',
-			],
+			),
 			1,
-			function() {
-				$token = (object) [
+			function () {
+				$token = (object) array(
 					'email' => 'user@domain.com',
 					'login' => 'login',
-				];
+				);
 				return json_encode( $token );
 			}
 		);
@@ -287,32 +289,32 @@ class GoogleClientTest extends TestCase {
 
 		$this->wpMockFunction(
 			'trailingslashit',
-			[
-				'https://www.googleapis.com'
-			],
+			array(
+				'https://www.googleapis.com',
+			),
 			1,
 			'https://www.googleapis.com/'
 		);
 
 		$this->wpMockFunction(
 			'wp_remote_get',
-			[
+			array(
 				'https://www.googleapis.com/oauth2/v2/userinfo?access_token=someToken',
-				[
-					'headers' => [
+				array(
+					'headers' => array(
 						'Accept' => 'application/json',
-					],
-				]
-			],
+					),
+				),
+			),
 			1,
 			'response'
 		);
 
 		$this->wpMockFunction(
 			'wp_remote_retrieve_response_code',
-			[
-				'response'
-			],
+			array(
+				'response',
+			),
 			1,
 			404
 		);
@@ -325,21 +327,21 @@ class GoogleClientTest extends TestCase {
 	 * @covers ::authorization_url
 	 */
 	public function testAuthorizationURL() {
-		$scope = [ 'email', 'profile', 'openid' ];
+		$scope = array( 'email', 'profile', 'openid' );
 		WP_Mock::onFilter( 'rtcamp.google_scope' )->with( $scope )->reply( $scope );
-		$ghClient = $this->createPartialMock( Testee::class, [ 'gt_redirect_url', 'state' ] );
+		$ghClient = $this->createPartialMock( Testee::class, array( 'gt_redirect_url', 'state' ) );
 		$ghClient->expects( $this->once() )->method( 'gt_redirect_url' )->willReturn( '' );
 		$ghClient->expects( $this->once() )->method( 'state' )->willReturn( 'abcd' );
 		$ghClient->client_id = 'cid';
 
-		$client_args = [
+		$client_args = array(
 			'client_id'     => 'cid',
 			'redirect_uri'  => '',
 			'state'         => 'abcd',
 			'scope'         => implode( ' ', $scope ),
 			'access_type'   => 'online',
 			'response_type' => 'code',
-		];
+		);
 
 		WP_Mock::expectFilter( 'rtcamp.google_client_args', $client_args );
 

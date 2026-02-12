@@ -56,9 +56,9 @@ class AuthenticatorTest extends TestCase {
 	 * @covers ::authenticate
 	 */
 	public function testAuthenticateException() {
-		$user = [
-			'name' => 'Test'
-		];
+		$user = array(
+			'name' => 'Test',
+		);
 
 		$user = (object) $user;
 
@@ -70,28 +70,28 @@ class AuthenticatorTest extends TestCase {
 	 * @covers ::authenticate
 	 */
 	public function testAuthentiCateReturnsUserObject() {
-		$user = (object) [
+		$user = (object) array(
 			'name'  => 'Test',
 			'email' => 'test@example.com',
-		];
+		);
 
 		$wp_user = Mockery::mock( \WP_User::class );
 
 		$this->wpMockFunction(
 			'email_exists',
-			[
+			array(
 				'test@example.com',
-			],
+			),
 			1,
 			true
 		);
 
 		$this->wpMockFunction(
 			'get_user_by',
-			[
+			array(
 				'email',
 				'test@example.com',
-			],
+			),
 			1,
 			$wp_user
 		);
@@ -106,16 +106,16 @@ class AuthenticatorTest extends TestCase {
 	 * @covers ::maybe_create_username
 	 */
 	public function testAuthenticateFilterApplied() {
-		$user = (object) [
+		$user = (object) array(
 			'name'  => 'Test',
 			'email' => 'test@example.com',
-		];
+		);
 
 		$this->wpMockFunction(
 			'email_exists',
-			[
+			array(
 				'test@example.com',
-			],
+			),
 			1,
 			false
 		);
@@ -124,10 +124,10 @@ class AuthenticatorTest extends TestCase {
 
 		$this->wpMockFunction(
 			'sanitize_user',
-			[
+			array(
 				'test',
 				true,
-			],
+			),
 			1,
 			'test'
 		);
@@ -135,8 +135,8 @@ class AuthenticatorTest extends TestCase {
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 
 		$helperMock->expects( 'unique_username' )
-		           ->once()
-		           ->withArgs( ['test'] );
+			->once()
+			->withArgs( array( 'test' ) );
 
 		WP_Mock::onFilter( 'rtcamp.google_register_user' )->with( $user )->reply( $wp_user );
 
@@ -152,10 +152,10 @@ class AuthenticatorTest extends TestCase {
 
 		$this->wpMockFunction(
 			'get_option',
-			[
+			array(
 				'users_can_register',
 				false,
-			],
+			),
 			1,
 			false
 		);
@@ -169,10 +169,10 @@ class AuthenticatorTest extends TestCase {
 	 * @covers ::register
 	 */
 	public function testRegisterThrowsExceptionForInvalidEmailDomain() {
-		$user                                     = (object) [
+		$user                                     = (object) array(
 			'email' => 'test@example.com',
 			'login' => 'test',
-		];
+		);
 		$this->settingsMock->registration_enabled = true;
 		$this->settingsMock->whitelisted_domains  = 'somedomain.com';
 
@@ -185,38 +185,38 @@ class AuthenticatorTest extends TestCase {
 	 * @covers ::can_register_with_email
 	 */
 	public function testRegisterReturnsUserObject() {
-		$user = (object) [
+		$user = (object) array(
 			'email' => 'test@example.com',
 			'login' => 'test',
-		];
+		);
 
 		$this->settingsMock->registration_enabled = true;
 		$this->settingsMock->whitelisted_domains  = 'example.com,somedomain.com';
 
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'unique_username' )
-		           ->once()
-		           ->withArgs( ['test'] )
-		           ->andReturn( 'test' );
+			->once()
+			->withArgs( array( 'test' ) )
+			->andReturn( 'test' );
 
 		$this->wpMockFunction(
 			'wp_generate_password',
-			[ 18 ],
+			array( 18 ),
 			1,
 			'thisisrandompass'
 		);
 
 		$this->wpMockFunction(
 			'wp_insert_user',
-			[
-				[
+			array(
+				array(
 					'user_login' => 'test',
 					'user_pass'  => 'thisisrandompass',
 					'user_email' => 'test@example.com',
 					'first_name' => '',
 					'last_name'  => '',
-				]
-			],
+				),
+			),
 			1,
 			100
 		);
@@ -227,10 +227,10 @@ class AuthenticatorTest extends TestCase {
 
 		$this->wpMockFunction(
 			'get_user_by',
-			[
+			array(
 				'id',
 				100,
-			],
+			),
 			1,
 			$wp_user
 		);
@@ -246,39 +246,39 @@ class AuthenticatorTest extends TestCase {
 	 * @covers ::can_register_with_email
 	 */
 	public function testRegisterReturnsUserObjectWithFirstNameOnly() {
-		$user = (object) [
+		$user = (object) array(
 			'email'      => 'test@example.com',
 			'login'      => 'test',
 			'given_name' => 'Test',
-		];
+		);
 
 		$this->settingsMock->registration_enabled = true;
 		$this->settingsMock->whitelisted_domains  = 'example.com,somedomain.com';
 
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'unique_username' )
-		           ->once()
-		           ->withArgs( ['test'] )
-		           ->andReturn( 'test' );
+			->once()
+			->withArgs( array( 'test' ) )
+			->andReturn( 'test' );
 
 		$this->wpMockFunction(
 			'wp_generate_password',
-			[ 18 ],
+			array( 18 ),
 			1,
 			'thisisrandompass'
 		);
 
 		$this->wpMockFunction(
 			'wp_insert_user',
-			[
-				[
+			array(
+				array(
 					'user_login' => 'test',
 					'user_pass'  => 'thisisrandompass',
 					'user_email' => 'test@example.com',
 					'first_name' => 'Test',
 					'last_name'  => '',
-				]
-			],
+				),
+			),
 			1,
 			100
 		);
@@ -289,10 +289,10 @@ class AuthenticatorTest extends TestCase {
 
 		$this->wpMockFunction(
 			'get_user_by',
-			[
+			array(
 				'id',
 				100,
-			],
+			),
 			1,
 			$wp_user
 		);
@@ -308,40 +308,40 @@ class AuthenticatorTest extends TestCase {
 	 * @covers ::can_register_with_email
 	 */
 	public function testRegisterReturnsUserObjectWithFirstLastName() {
-		$user = (object) [
+		$user = (object) array(
 			'email'       => 'test@example.com',
 			'login'       => 'test',
 			'given_name'  => 'Test',
 			'family_name' => 'User',
-		];
+		);
 
 		$this->settingsMock->registration_enabled = true;
 		$this->settingsMock->whitelisted_domains  = 'example.com,somedomain.com';
 
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'unique_username' )
-		           ->once()
-		           ->withArgs( ['test'] )
-		           ->andReturn( 'test' );
+			->once()
+			->withArgs( array( 'test' ) )
+			->andReturn( 'test' );
 
 		$this->wpMockFunction(
 			'wp_generate_password',
-			[ 18 ],
+			array( 18 ),
 			1,
 			'thisisrandompass'
 		);
 
 		$this->wpMockFunction(
 			'wp_insert_user',
-			[
-				[
+			array(
+				array(
 					'user_login' => 'test',
 					'user_pass'  => 'thisisrandompass',
 					'user_email' => 'test@example.com',
 					'first_name' => 'Test',
 					'last_name'  => 'User',
-				]
-			],
+				),
+			),
 			1,
 			100
 		);
@@ -352,10 +352,10 @@ class AuthenticatorTest extends TestCase {
 
 		$this->wpMockFunction(
 			'get_user_by',
-			[
+			array(
 				'id',
 				100,
-			],
+			),
 			1,
 			$wp_user
 		);
@@ -376,24 +376,24 @@ class AuthenticatorTest extends TestCase {
 
 		$this->wpMockFunction(
 			'wp_clear_auth_cookie',
-			[],
+			array(),
 			1
 		);
 
 		$this->wpMockFunction(
 			'wp_set_current_user',
-			[
+			array(
 				100,
 				'test',
-			],
+			),
 			1
 		);
 
 		$this->wpMockFunction(
 			'wp_set_auth_cookie',
-			[
-				100
-			],
+			array(
+				100,
+			),
 			1
 		);
 

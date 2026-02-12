@@ -40,14 +40,14 @@ class Settings implements ModuleInterface {
 	 *
 	 * @var string[]
 	 */
-	private $getters = [
+	private $getters = array(
 		'WP_GOOGLE_LOGIN_CLIENT_ID'         => 'client_id',
 		'WP_GOOGLE_LOGIN_SECRET'            => 'client_secret',
 		'WP_GOOGLE_LOGIN_USER_REGISTRATION' => 'registration_enabled',
 		'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS' => 'whitelisted_domains',
 		'WP_GOOGLE_ONE_TAP_LOGIN'           => 'one_tap_login',
 		'WP_GOOGLE_ONE_TAP_LOGIN_SCREEN'    => 'one_tap_login_screen',
-	];
+	);
 
 	/**
 	 * Getter method.
@@ -79,13 +79,13 @@ class Settings implements ModuleInterface {
 	 * @return void
 	 */
 	public function init(): void {
-		$this->options = get_option( 'wp_google_login_settings', [] );
+		$this->options = get_option( 'wp_google_login_settings', array() );
 
 		/**
 		 * Actions.
 		 */
-		add_action( 'admin_init', [ $this, 'register_settings' ] );
-		add_action( 'admin_menu', [ $this, 'settings_page' ] );
+		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		add_action( 'admin_menu', array( $this, 'settings_page' ) );
 
 		/**
 		 * Filters.
@@ -112,55 +112,55 @@ class Settings implements ModuleInterface {
 		add_settings_field(
 			'wp_google_login_client_id',
 			__( 'Client ID', 'login-with-google' ),
-			[ $this, 'client_id_field' ],
+			array( $this, 'client_id_field' ),
 			'login-with-google',
 			'wp_google_login_section',
-			[ 'label_for' => 'client-id' ]
+			array( 'label_for' => 'client-id' )
 		);
 
 		add_settings_field(
 			'wp_google_login_client_secret',
 			__( 'Client Secret', 'login-with-google' ),
-			[ $this, 'client_secret_field' ],
+			array( $this, 'client_secret_field' ),
 			'login-with-google',
 			'wp_google_login_section',
-			[ 'label_for' => 'client-secret' ]
+			array( 'label_for' => 'client-secret' )
 		);
 
 		add_settings_field(
 			'wp_google_allow_registration',
 			__( 'Create New User', 'login-with-google' ),
-			[ $this, 'user_registration' ],
+			array( $this, 'user_registration' ),
 			'login-with-google',
 			'wp_google_login_section',
-			[ 'label_for' => 'user-registration' ]
+			array( 'label_for' => 'user-registration' )
 		);
 
 		add_settings_field(
 			'wp_google_one_tap_login',
 			__( 'Enable One Tap Login', 'login-with-google' ),
-			[ $this, 'one_tap_login' ],
+			array( $this, 'one_tap_login' ),
 			'login-with-google',
 			'wp_google_login_section',
-			[ 'label_for' => 'one-tap-login' ]
+			array( 'label_for' => 'one-tap-login' )
 		);
 
 		add_settings_field(
 			'wp_google_one_tap_login_screen',
 			__( 'One Tap Login Locations', 'login-with-google' ),
-			[ $this, 'one_tap_login_screens' ],
+			array( $this, 'one_tap_login_screens' ),
 			'login-with-google',
 			'wp_google_login_section',
-			[ 'label_for' => 'one-tap-login-screen' ]
+			array( 'label_for' => 'one-tap-login-screen' )
 		);
 
 		add_settings_field(
 			'wp_google_whitelisted_domain',
 			__( 'Whitelisted Domains', 'login-with-google' ),
-			[ $this, 'whitelisted_domains' ],
+			array( $this, 'whitelisted_domains' ),
 			'login-with-google',
 			'wp_google_login_section',
-			[ 'label_for' => 'whitelisted-domains' ]
+			array( 'label_for' => 'whitelisted-domains' )
 		);
 	}
 
@@ -327,7 +327,7 @@ class Settings implements ModuleInterface {
 			__( 'Login with Google', 'login-with-google' ),
 			'manage_options',
 			'login-with-google',
-			[ $this, 'output' ]
+			array( $this, 'output' )
 		);
 	}
 

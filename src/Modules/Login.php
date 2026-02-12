@@ -82,18 +82,18 @@ class Login implements ModuleInterface {
 		/**
 		 * Actions.
 		 */
-		add_action( 'login_form', [ $this, 'login_button' ] );
+		add_action( 'login_form', array( $this, 'login_button' ) );
 		// Priority is 20 because of issue: https://core.trac.wordpress.org/ticket/46748.
-		add_action( 'authenticate', [ $this, 'authenticate' ], 20 );
-		add_action( 'rtcamp.google_register_user', [ $this->authenticator, 'register' ] );
-		add_action( 'rtcamp.google_user_created', [ $this, 'user_meta' ] );
-		add_action( 'wp_login', [ $this, 'login_redirect' ] );
+		add_action( 'authenticate', array( $this, 'authenticate' ), 20 );
+		add_action( 'rtcamp.google_register_user', array( $this->authenticator, 'register' ) );
+		add_action( 'rtcamp.google_user_created', array( $this, 'user_meta' ) );
+		add_action( 'wp_login', array( $this, 'login_redirect' ) );
 
 		/**
 		 * Filters.
 		 */
-		add_filter( 'rtcamp.google_redirect_url', [ $this, 'redirect_url' ] );
-		add_filter( 'rtcamp.google_login_state', [ $this, 'state_redirect' ] );
+		add_filter( 'rtcamp.google_redirect_url', array( $this, 'redirect_url' ) );
+		add_filter( 'rtcamp.google_login_state', array( $this, 'state_redirect' ) );
 	}
 
 	/**
@@ -107,9 +107,9 @@ class Login implements ModuleInterface {
 
 		Helper::render_template(
 			$template,
-			[
+			array(
 				'login_url' => $login_url,
-			]
+			)
 		);
 	}
 

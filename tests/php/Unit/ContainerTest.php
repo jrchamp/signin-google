@@ -22,7 +22,7 @@ use RtCamp\GoogleLogin\Interfaces\Container as ContainerInterface;
  *
  * @package RtCamp\GoogleLogin\Tests\Unit
  */
-class ContainerTest extends  TestCase {
+class ContainerTest extends TestCase {
 
 	/**
 	 * @var PimpleContainer
@@ -53,8 +53,8 @@ class ContainerTest extends  TestCase {
 	 */
 	public function testGetThrowsExceptionForNonExistentService() {
 		$this->pimpleMock->expects( $this->once() )
-		                        ->method( 'keys' )
-		                        ->willReturn( [ 'example_service' ] );
+			->method( 'keys' )
+			->willReturn( array( 'example_service' ) );
 
 		$this->expectException( InvalidArgumentException::class );
 		$this->testee->get( 'non_existent_service' );
@@ -64,21 +64,21 @@ class ContainerTest extends  TestCase {
 	 * @covers ::get
 	 */
 	public function testGetReturnsServiceObject() {
-		$dummyService = (object) [
+		$dummyService = (object) array(
 			'some_key'       => 'some_value',
 			'some_other_key' => 'some_other_value',
-		];
+		);
 
 		$this->testee->container['test_service'] = $dummyService;
 
 		$this->pimpleMock->expects( $this->once() )
-		                        ->method( 'keys' )
-		                        ->willReturn( [ 'test_service' ] );
+			->method( 'keys' )
+			->willReturn( array( 'test_service' ) );
 
 		$this->pimpleMock->expects( $this->once() )
-		                        ->method( 'offsetGet' )
-		                        ->with( 'test_service' )
-		                        ->willReturn( $dummyService );
+			->method( 'offsetGet' )
+			->with( 'test_service' )
+			->willReturn( $dummyService );
 
 		$this->testee->get( 'test_service' );
 	}

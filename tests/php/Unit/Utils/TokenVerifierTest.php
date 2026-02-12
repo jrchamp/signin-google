@@ -62,7 +62,7 @@ class TokenVerifierTest extends TestCase {
 	public function testGetSupportedAlgorithmDefault() {
 		\WP_Mock::expectFilter( 'rtcamp.default_algorithm', OPENSSL_ALGO_SHA256, '' );
 		$expected = OPENSSL_ALGO_SHA256;
-		$algo = $this->testee::get_supported_algorithm();
+		$algo     = $this->testee::get_supported_algorithm();
 
 		$this->assertSame( $expected, $algo );
 	}
@@ -72,7 +72,7 @@ class TokenVerifierTest extends TestCase {
 	 */
 	public function testGetSHA256Algo() {
 		$expected = OPENSSL_ALGO_SHA256;
-		$algo = $this->testee::get_supported_algorithm( 'RS256' );
+		$algo     = $this->testee::get_supported_algorithm( 'RS256' );
 
 		$this->assertSame( $expected, $algo );
 	}
@@ -101,9 +101,9 @@ class TokenVerifierTest extends TestCase {
 	 * @covers ::current_user
 	 */
 	public function testCurrentUser() {
-		$wp_user = (object) [
+		$wp_user = (object) array(
 			'name' => 'Test',
-		];
+		);
 		$this->setTesteeProperty( $this->testee, 'current_user', $wp_user );
 		$result = $this->testee->current_user();
 
@@ -125,9 +125,9 @@ class TokenVerifierTest extends TestCase {
 	public function testPublicKeyCachedValue() {
 		$this->wpMockFunction(
 			'get_transient',
-			[
-				'lwg_pk_my_public_key'
-			],
+			array(
+				'lwg_pk_my_public_key',
+			),
 			1,
 			'abcd'
 		);
@@ -143,27 +143,27 @@ class TokenVerifierTest extends TestCase {
 	public function testPublicKeyIsNullForNon200Response() {
 		$this->wpMockFunction(
 			'get_transient',
-			[
-				'lwg_pk_my_public_key'
-			],
+			array(
+				'lwg_pk_my_public_key',
+			),
 			1,
 			null
 		);
 
 		$this->wpMockFunction(
 			'wp_remote_get',
-			[
-				$this->testee::CERTS_URL
-			],
+			array(
+				$this->testee::CERTS_URL,
+			),
 			1,
 			'certificate'
 		);
 
 		$this->wpMockFunction(
 			'wp_remote_retrieve_response_code',
-			[
+			array(
 				'certificate',
-			],
+			),
 			1,
 			400
 		);
@@ -180,66 +180,66 @@ class TokenVerifierTest extends TestCase {
 	public function testPublicKeyRetrievalFromResponse() {
 		$this->wpMockFunction(
 			'get_transient',
-			[
-				'lwg_pk_my_public_key'
-			],
+			array(
+				'lwg_pk_my_public_key',
+			),
 			1,
 			null
 		);
 
 		$this->wpMockFunction(
 			'wp_remote_get',
-			[
-				$this->testee::CERTS_URL
-			],
+			array(
+				$this->testee::CERTS_URL,
+			),
 			1,
 			'certificate'
 		);
 
 		$this->wpMockFunction(
 			'wp_remote_retrieve_response_code',
-			[
+			array(
 				'certificate',
-			],
+			),
 			1,
 			200
 		);
 
 		$headers = \Mockery::mock( \Requests_Utility_CaseInsensitiveDictionary::class );
-		$headers->expects( 'offsetExists' )->withArgs( [ 'cache-control' ] )->andReturn( true );
-		$headers->expects( 'offsetGet' )->withArgs( [ 'cache-control' ] )->andReturn( 'public, max-age=600' );
+		$headers->expects( 'offsetExists' )->withArgs( array( 'cache-control' ) )->andReturn( true );
+		$headers->expects( 'offsetGet' )->withArgs( array( 'cache-control' ) )->andReturn( 'public, max-age=600' );
 
-		$body = [
+		$body = array(
 			'my_public_key' => 'thisissomerandomkey',
-		];
+		);
 
 		$body = json_encode( $body );
 
 		$this->wpMockFunction(
 			'wp_remote_retrieve_headers',
-			[
+			array(
 				'certificate',
-			],
+			),
 			1,
 			$headers
 		);
 
 		$this->wpMockFunction(
 			'wp_remote_retrieve_body',
-			[
+			array(
 				'certificate',
-			],
+			),
 			1,
 			$body
 		);
 
 		$this->wpMockFunction(
 			'set_transient',
-			[
+			array(
 				'lwg_pk_my_public_key',
 				'thisissomerandomkey',
-				300
-			],
+				300,
+			),
 			1,
 			true
 		);
@@ -255,14 +255,14 @@ class TokenVerifierTest extends TestCase {
 	public function testSetTransient() {
 		$this->wpMockFunction(
 			'set_transient',
-			[
+			array(
 				'key',
 				'val',
-				200
-			]
+				200,
+			)
 		);
 
-		$this->call_private_method( $this->testee, 'set_transient', [ 'key', 'val', 200 ] );
+		$this->call_private_method( $this->testee, 'set_transient', array( 'key', 'val', 200 ) );
 
 		$this->assertConditionsMet();
 	}
@@ -273,14 +273,14 @@ class TokenVerifierTest extends TestCase {
 	public function testGetTransient() {
 		$this->wpMockFunction(
 			'get_transient',
-			[
+			array(
 				'key',
-			],
+			),
 			1,
 			'val'
 		);
 
-		$val = $this->call_private_method( $this->testee, 'get_transient', [ 'key' ] );
+		$val = $this->call_private_method( $this->testee, 'get_transient', array( 'key' ) );
 
 		$this->assertSame( 'val', $val );
 		$this->assertConditionsMet();

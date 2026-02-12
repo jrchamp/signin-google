@@ -6,9 +6,11 @@
 
 let mix = require( 'laravel-mix' );
 
-mix.options( {
-	processCssUrls: false
-} );
+mix.options(
+	{
+		processCssUrls: false
+	}
+);
 
 mix.copy( 'assets/src/images', 'assets/build/images' )
 	.copy( 'assets/src/js/onetap.js', 'assets/build/js' )

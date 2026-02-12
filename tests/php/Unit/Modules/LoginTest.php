@@ -73,13 +73,13 @@ class LoginTest extends TestCase {
 	 * @covers ::init
 	 */
 	public function testInit() {
-		WP_Mock::expectActionAdded( 'login_form', [ $this->testee, 'login_button' ] );
-		WP_Mock::expectActionAdded( 'authenticate', [ $this->testee, 'authenticate' ], 20 );
-		WP_Mock::expectActionAdded( 'rtcamp.google_register_user', [ $this->authenticatorMock, 'register' ] );
-		WP_Mock::expectActionAdded( 'rtcamp.google_redirect_url', [ $this->testee, 'redirect_url' ] );
-		WP_Mock::expectActionAdded( 'rtcamp.google_user_created', [ $this->testee, 'user_meta' ] );
-		WP_Mock::expectFilterAdded( 'rtcamp.google_login_state', [ $this->testee, 'state_redirect' ] );
-		WP_Mock::expectActionAdded( 'wp_login', [ $this->testee, 'login_redirect' ] );
+		WP_Mock::expectActionAdded( 'login_form', array( $this->testee, 'login_button' ) );
+		WP_Mock::expectActionAdded( 'authenticate', array( $this->testee, 'authenticate' ), 20 );
+		WP_Mock::expectActionAdded( 'rtcamp.google_register_user', array( $this->authenticatorMock, 'register' ) );
+		WP_Mock::expectActionAdded( 'rtcamp.google_redirect_url', array( $this->testee, 'redirect_url' ) );
+		WP_Mock::expectActionAdded( 'rtcamp.google_user_created', array( $this->testee, 'user_meta' ) );
+		WP_Mock::expectFilterAdded( 'rtcamp.google_login_state', array( $this->testee, 'state_redirect' ) );
+		WP_Mock::expectActionAdded( 'wp_login', array( $this->testee, 'login_redirect' ) );
 
 		$this->testee->init();
 		$this->assertConditionsMet();
@@ -94,43 +94,43 @@ class LoginTest extends TestCase {
 
 		$containerMock = $this->createMock( Container::class );
 		$containerMock->expects( $this->once() )
-		              ->method( 'get' )
-		              ->willReturn( $this->ghClientMock );
+			->method( 'get' )
+			->willReturn( $this->ghClientMock );
 
 		$pluginMock->expects( $this->once() )
-		           ->method( 'container' )
-		           ->willReturn( $containerMock );
+			->method( 'container' )
+			->willReturn( $containerMock );
 
 		$this->ghClientMock->expects( $this->once() )
-		                   ->method( 'authorization_url' )
-		                   ->willReturn( 'https://google.com/auth/' );
+			->method( 'authorization_url' )
+			->willReturn( 'https://google.com/auth/' );
 
 		$this->wpMockFunction(
 			'RtCamp\GoogleLogin\plugin',
-			[],
+			array(),
 			2,
 			$pluginMock
 		);
 
 		WP_Mock::userFunction(
 			'trailingslashit',
-			[
+			array(
 				'times'      => 1,
-				'args'       => [
-					'https://example.com/templates/'
-				],
-				'return_arg' => 0
-			]
+				'args'       => array(
+					'https://example.com/templates/',
+				),
+				'return_arg' => 0,
+			)
 		);
 
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'render_template' )->once()->withArgs(
-			[
+			array(
 				'https://example.com/templates/google-login-button.php',
-				[
+				array(
 					'login_url' => 'https://google.com/auth/',
-				]
-			]
+				),
+			)
 		);
 
 		$this->testee->login_button();
@@ -143,18 +143,18 @@ class LoginTest extends TestCase {
 	public function testAuthenticationForNoCode() {
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
-			[
+			array(
 				INPUT_GET,
 				'code',
-				FILTER_SANITIZE_FULL_SPECIAL_CHARS
-			]
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			)
 		)->andReturn( null );
 
 		$wp_user_mock        = new \stdClass();
 		$wp_user_mock->login = 'test';
 		$wp_user_mock->email = 'test@unit.com';
 
-		$returned     = $this->testee->authenticate( $wp_user_mock );
+		$returned = $this->testee->authenticate( $wp_user_mock );
 
 		$this->assertSame( $returned, $wp_user_mock );
 	}
@@ -165,11 +165,11 @@ class LoginTest extends TestCase {
 	public function testAuthenticationForAlreadyAuthenticatedUser() {
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'filter_input' )->never()->withArgs(
-			[
+			array(
 				INPUT_GET,
 				'code',
-				FILTER_SANITIZE_FULL_SPECIAL_CHARS
-			]
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			)
 		)->andReturn( null );
 
 		$wp_user_mock = Mockery::mock( 'WP_User' );
@@ -182,35 +182,35 @@ class LoginTest extends TestCase {
 	 * @covers ::authenticate
 	 */
 	public function testAuthenticationForDifferentProvider() {
-		$state = [
+		$state = array(
 			'nonce'    => '1234',
 			'provider' => 'some_other',
-		];
+		);
 
 		$state = base64_encode( json_encode( $state ) );
 
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
-			[
+			array(
 				INPUT_GET,
 				'code',
-				FILTER_SANITIZE_FULL_SPECIAL_CHARS
-			]
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			)
 		)->andReturn( 'test_code' );
 
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
-			[
+			array(
 				INPUT_GET,
 				'state',
-				FILTER_SANITIZE_FULL_SPECIAL_CHARS
-			]
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			)
 		)->andReturn( $state );
 
 		$wp_user_mock        = new \stdClass();
 		$wp_user_mock->login = 'test';
 		$wp_user_mock->email = 'test@unit.com';
 
-		$returned     = $this->testee->authenticate( $wp_user_mock );
+		$returned = $this->testee->authenticate( $wp_user_mock );
 
 		$this->assertSame( $returned, $wp_user_mock );
 	}
@@ -221,19 +221,19 @@ class LoginTest extends TestCase {
 	public function testAuthenticationWithForgedState() {
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
-			[
+			array(
 				INPUT_GET,
 				'code',
-				FILTER_SANITIZE_FULL_SPECIAL_CHARS
-			]
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			)
 		)->andReturn( 'abc' );
 
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
-			[
+			array(
 				INPUT_GET,
 				'state',
-				FILTER_SANITIZE_FULL_SPECIAL_CHARS
-			]
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			)
 		)->andReturn( 'eyJwcm92aWRlciI6ImdpdGh1YiJ9' );
 
 		$returned = $this->testee->authenticate();
@@ -248,52 +248,51 @@ class LoginTest extends TestCase {
 	public function testAuthenticationWhenUserExists() {
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
-			[
+			array(
 				INPUT_GET,
 				'code',
-				FILTER_SANITIZE_FULL_SPECIAL_CHARS
-			]
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			)
 		)->andReturn( 'abc' );
 
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
-			[
+			array(
 				INPUT_GET,
 				'state',
-				FILTER_SANITIZE_FULL_SPECIAL_CHARS
-			]
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			)
 		)->andReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
 
 		$this->ghClientMock->expects( $this->never() )
-		                   ->method( 'state' )
-		                   ->willReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
+			->method( 'state' )
+			->willReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
 
 		$this->wpMockFunction(
 			'wp_verify_nonce',
-			[
+			array(
 				'testnonce',
 				'login_with_google',
-			],
+			),
 			1,
 			true
 		);
 
 		$this->ghClientMock->expects( $this->once() )
-		                   ->method( 'set_access_token' )
-		                   ->with( 'abc' );
+			->method( 'set_access_token' )
+			->with( 'abc' );
 
-		$user = (object) [
+		$user = (object) array(
 			'email' => 'fakeemail@domain.com',
-		];
+		);
 
 		$this->ghClientMock->expects( $this->once() )
-		                   ->method( 'user' )
-		                   ->willReturn( $user );
-
+			->method( 'user' )
+			->willReturn( $user );
 
 		$userMock = Mockery::mock( 'WP_User' );
 		$this->authenticatorMock->expects( $this->once() )
-		                        ->method( 'authenticate' )
-		                        ->willReturn( $userMock );
+			->method( 'authenticate' )
+			->willReturn( $userMock );
 
 		$returned = $this->testee->authenticate();
 		$this->assertSame( $returned, $userMock );
@@ -307,39 +306,39 @@ class LoginTest extends TestCase {
 	public function testAuthenticationCapturesExceptions() {
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
-			[
+			array(
 				INPUT_GET,
 				'code',
-				FILTER_SANITIZE_FULL_SPECIAL_CHARS
-			]
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			)
 		)->andReturn( 'abc' );
 
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
-			[
+			array(
 				INPUT_GET,
 				'state',
-				FILTER_SANITIZE_FULL_SPECIAL_CHARS
-			]
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			)
 		)->andReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
 
 		$this->ghClientMock->expects( $this->never() )
-		                   ->method( 'state' )
-		                   ->willReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
+			->method( 'state' )
+			->willReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
 
 		$this->wpMockFunction(
 			'wp_verify_nonce',
-			[
+			array(
 				'testnonce',
 				'login_with_google',
-			],
+			),
 			1,
 			true
 		);
 
 		$this->ghClientMock->expects( $this->once() )
-		                   ->method( 'set_access_token' )
-		                   ->with( 'abc' )
-		                   ->willThrowException( new Exception( 'Exception for test' ) );
+			->method( 'set_access_token' )
+			->with( 'abc' )
+			->willThrowException( new Exception( 'Exception for test' ) );
 
 		Mockery::mock( 'WP_Error' );
 		$returned = $this->testee->authenticate();
@@ -352,29 +351,29 @@ class LoginTest extends TestCase {
 	 * @covers ::user_meta
 	 */
 	public function testUserMeta() {
-		$user = new \stdClass();
+		$user        = new \stdClass();
 		$user->login = 'login';
 
 		$this->wpMockFunction(
 			'add_user_meta',
-			[
+			array(
 				20,
 				'oauth_user',
 				1,
 				true,
-			],
+			),
 			1,
 			true
 		);
 
 		$this->wpMockFunction(
 			'add_user_meta',
-			[
+			array(
 				20,
 				'oauth_provider',
 				'google',
 				true,
-			],
+			),
 			1,
 			true
 		);
@@ -391,10 +390,10 @@ class LoginTest extends TestCase {
 
 		$this->wpMockFunction(
 			'remove_query_arg',
-			[
+			array(
 				'redirect_to',
 				$url,
-			],
+			),
 			1,
 			'https://example.com/'
 		);
@@ -409,14 +408,14 @@ class LoginTest extends TestCase {
 	public function testStateRedirectWithRedirectTo() {
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
-			[
+			array(
 				INPUT_GET,
 				'redirect_to',
-				FILTER_SANITIZE_FULL_SPECIAL_CHARS
-			]
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			)
 		)->andReturn( 'https://example.com/state-page' );
 
-		$state_data = $this->testee->state_redirect( [] );
+		$state_data = $this->testee->state_redirect( array() );
 
 		$this->assertIsArray( $state_data );
 		$this->assertContains( 'https://example.com/state-page', $state_data );
@@ -428,22 +427,22 @@ class LoginTest extends TestCase {
 	public function testStateRedirectWithoutRedirectTo() {
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
-			[
+			array(
 				INPUT_GET,
 				'redirect_to',
-				FILTER_SANITIZE_FULL_SPECIAL_CHARS
-			]
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			)
 		)->andReturn( null );
 
 		$this->wpMockFunction(
 			'admin_url',
-			[],
+			array(),
 			1,
 			'https://example.com/login'
 		);
 
 		WP_Mock::expectFilter( 'rtcamp.google_default_redirect', 'https://example.com/login' );
-		$state_data = $this->testee->state_redirect( [] );
+		$state_data = $this->testee->state_redirect( array() );
 		$this->assertIsArray( $state_data );
 		$this->assertContains( 'https://example.com/login', $state_data );
 	}
@@ -454,12 +453,12 @@ class LoginTest extends TestCase {
 	public function testLoginRedirectWithNotStateAuthenticated() {
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
-			[
+			array(
 				INPUT_GET,
 				'state',
-				FILTER_SANITIZE_FULL_SPECIAL_CHARS
-			]
-		)->andReturn( [] );
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			)
+		)->andReturn( array() );
 
 		$data = $this->testee->login_redirect();
 		$this->assertNull( $data );

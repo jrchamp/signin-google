@@ -89,10 +89,10 @@ class GoogleClient {
 	 * @throws Exception Empty access token.
 	 */
 	public function __call( string $name, $args ) {
-		$methods = [
+		$methods = array(
 			'user',
 			'emails',
-		];
+		);
 
 		if ( in_array( $name, $methods, true ) && empty( $this->access_token ) ) {
 			throw new Exception( esc_html__( 'Access token must be set to make this API call', 'login-with-google' ) );
@@ -132,17 +132,17 @@ class GoogleClient {
 	 * @return string
 	 */
 	public function authorization_url(): string {
-		$plugin_scope = [
+		$plugin_scope = array(
 			'email',
 			'profile',
 			'openid',
-		];
+		);
 
 		$scope = apply_filters_deprecated(
 			'wp_google_login_scopes',
-			[
+			array(
 				$plugin_scope,
-			],
+			),
 			'1.0.15',
 			'rtcamp.google_scope'
 		);
@@ -154,14 +154,14 @@ class GoogleClient {
 		 */
 		$scope = apply_filters( 'rtcamp.google_scope', $scope );
 
-		$client_args = [
+		$client_args = array(
 			'client_id'     => $this->client_id,
 			'redirect_uri'  => $this->gt_redirect_url(),
 			'state'         => $this->state(),
 			'scope'         => implode( ' ', $scope ),
 			'access_type'   => 'online',
 			'response_type' => 'code',
-		];
+		);
 
 		/**
 		 * Filter the arguments for sending in query.
@@ -186,18 +186,18 @@ class GoogleClient {
 	public function access_token( string $code ): \stdClass {
 		$response = wp_remote_post(
 			self::TOKEN_URL,
-			[
-				'headers' => [
+			array(
+				'headers' => array(
 					'Accept' => 'application/json',
-				],
-				'body'    => [
+				),
+				'body'    => array(
 					'client_id'     => $this->client_id,
 					'client_secret' => $this->client_secret,
 					'redirect_uri'  => $this->gt_redirect_url(),
 					'code'          => $code,
 					'grant_type'    => 'authorization_code',
-				],
-			]
+				),
+			)
 		);
 
 		if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
@@ -219,11 +219,11 @@ class GoogleClient {
 			//phpcs:disable WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
 			$user = wp_remote_get(
 				trailingslashit( self::API_BASE ) . 'oauth2/v2/userinfo?access_token=' . $this->access_token,
-				[
-					'headers' => [
+				array(
+					'headers' => array(
 						'Accept' => 'application/json',
-					],
-				]
+					),
+				)
 			);
 
 			if ( 200 !== wp_remote_retrieve_response_code( $user ) ) {

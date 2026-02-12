@@ -68,14 +68,14 @@ class Plugin {
 	 *
 	 * @var string[]
 	 */
-	public $active_modules = [
+	public $active_modules = array(
 		'settings',
 		'login_flow',
 		'assets',
 		'shortcode',
 		'one_tap_login',
 		'google_login_block',
-	];
+	);
 
 	/**
 	 * Plugin constructor.
@@ -109,9 +109,9 @@ class Plugin {
 		$this->container()->define_services();
 		$this->activate_modules();
 
-		add_action( 'init', [ $this, 'load_translations' ] );
+		add_action( 'init', array( $this, 'load_translations' ) );
 
-		add_action( 'plugin_action_links_' . plugin_basename( $this->path ) . '/login-with-google.php', [ $this, 'add_plugin_action_links' ] );
+		add_action( 'plugin_action_links_' . plugin_basename( $this->path ) . '/login-with-google.php', array( $this, 'add_plugin_action_links' ) );
 	}
 
 	/**
@@ -151,7 +151,7 @@ class Plugin {
 	 * @return array
 	 */
 	public function add_plugin_action_links( $actions ) {
-		$new_actions = [];
+		$new_actions = array();
 
 		$new_actions['settings'] = sprintf(
 			/* translators: %1$s: Setting name, %2$s: URL for settings page link. */

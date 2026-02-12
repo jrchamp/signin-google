@@ -19,14 +19,13 @@ use ReflectionMethod;
  *
  * @author Guido Scialfa <dev@guidoscialfa.com>
  */
-class TestCase extends WPMockTestCase
-{
+class TestCase extends WPMockTestCase {
+
 	/**
 	 * Sets up the fixture, for example, open a network connection.
 	 * This method is called before a test is executed.
 	 */
-	public function setUp(): void
-	{
+	public function setUp(): void {
 		parent::setUp();
 		\WP_Mock::setUp();
 	}
@@ -35,8 +34,7 @@ class TestCase extends WPMockTestCase
 	 * Tears down the fixture, for example, close a network connection.
 	 * This method is called after a test is executed.
 	 */
-	public function tearDown(): void
-	{
+	public function tearDown(): void {
 		parent::tearDown();
 		\WP_Mock::tearDown();
 	}
@@ -47,8 +45,8 @@ class TestCase extends WPMockTestCase
 	 * Basic configuration available for all of the testee objects, call `getMock` to get the mock.
 	 *
 	 * @param string $className
-	 * @param array $constructorArguments
-	 * @param array $methods
+	 * @param array  $constructorArguments
+	 * @param array  $methods
 	 * @param string $sutMethod
 	 *
 	 * @return PHPUnit_Framework_MockObject_MockBuilder
@@ -60,13 +58,13 @@ class TestCase extends WPMockTestCase
 		string $sutMethod
 	): object {
 
-		$testee = $this->getMockBuilder($className);
+		$testee = $this->getMockBuilder( $className );
 		$constructorArguments
-			? $testee->setConstructorArgs($constructorArguments)
+			? $testee->setConstructorArgs( $constructorArguments )
 			: $testee->disableOriginalConstructor();
 
-		$methods and $testee->setMethods($methods);
-		$sutMethod and $testee->setMethodsExcept([$sutMethod]);
+		$methods && $testee->setMethods( $methods );
+		$sutMethod && $testee->setMethodsExcept( array( $sutMethod ) );
 
 		return $testee;
 	}
@@ -75,10 +73,11 @@ class TestCase extends WPMockTestCase
 	 * Retrieve a Testee Mock to Test Protected Methods
 	 *
 	 * return MockBuilder
+	 *
 	 * @param string $className
-	 * @param array $constructorArguments
+	 * @param array  $constructorArguments
 	 * @param string $method
-	 * @param array $methods
+	 * @param array  $methods
 	 * @return array
 	 * @throws ReflectionException
 	 */
@@ -88,19 +87,19 @@ class TestCase extends WPMockTestCase
 		string $method,
 		array $methods
 	): array {
-
 		$testee = $this->buildTesteeMock(
 			$className,
 			$constructorArguments,
 			$methods,
 			''
 		)->getMock();
-		$reflectionMethod = new ReflectionMethod($className, $method);
-		$reflectionMethod->setAccessible(true);
-		return [
+
+		$reflectionMethod = new ReflectionMethod( $className, $method );
+		$reflectionMethod->setAccessible( true );
+		return array(
 			$testee,
 			$reflectionMethod,
-		];
+		);
 	}
 
 	/**
@@ -115,10 +114,10 @@ class TestCase extends WPMockTestCase
 		object $object
 	) {
 
-		$reflection = new \ReflectionClass($object);
-		$reflectionProperty = $reflection->getProperty($property);
-		$reflectionProperty->setAccessible(true);
-		return $reflectionProperty->getValue($object);
+		$reflection         = new \ReflectionClass( $object );
+		$reflectionProperty = $reflection->getProperty( $property );
+		$reflectionProperty->setAccessible( true );
+		return $reflectionProperty->getValue( $object );
 	}
 
 	/**
@@ -131,12 +130,11 @@ class TestCase extends WPMockTestCase
 	 * @throws ReflectionException
 	 */
 	// phpcs:disable Inpsyde.CodeQuality.ArgumentTypeDeclaration.NoArgumentType
-	protected function setTesteeProperty(object $object, string $property, $value): void
-	{
-		$reflection = new \ReflectionClass($object);
-		$reflectionProperty = $reflection->getProperty($property);
-		$reflectionProperty->setAccessible(true);
-		$reflectionProperty->setValue($object, $value);
+	protected function setTesteeProperty( object $object, string $property, $value ): void {
+		$reflection         = new \ReflectionClass( $object );
+		$reflectionProperty = $reflection->getProperty( $property );
+		$reflectionProperty->setAccessible( true );
+		$reflectionProperty->setValue( $object, $value );
 	}
 
 	/**
@@ -144,26 +142,26 @@ class TestCase extends WPMockTestCase
 	 * build-in wp functions.
 	 *
 	 * @param string $function_name
-	 * @param mixed $args
-	 * @param int $times
-	 * @param mixed $return
+	 * @param mixed  $args
+	 * @param int    $times
+	 * @param mixed  $return
 	 */
 	protected function wpMockFunction(
 		string $functionName,
-		$args = [],
+		$args = array(),
 		int $times = 1,
 		$return = null
 	) {
 
-		$funcArgs = [
+		$funcArgs = array(
 			'times' => $times,
-		];
+		);
 
-		if (!empty($args)) {
+		if ( ! empty( $args ) ) {
 			$funcArgs['args'] = $args;
 		}
 
-		if (!empty($return)) {
+		if ( ! empty( $return ) ) {
 			$funcArgs['return'] = $return;
 		}
 

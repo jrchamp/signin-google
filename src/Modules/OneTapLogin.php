@@ -91,13 +91,13 @@ class OneTapLogin implements Module {
 		if ( $this->settings->one_tap_login ) {
 			// If oneTap login is enabled sitewide, we need to enqueue it using both wp_enqueue_scripts and login_enqueue_scripts. If it is not sitewide, we only need to enqueue it using login_enqueue_scripts.
 			if ( 'sitewide' === $this->settings->one_tap_login_screen ) {
-				add_action( 'wp_enqueue_scripts', [ $this, 'one_tap_scripts' ] );
-				add_action( 'wp_footer', [ $this, 'one_tap_prompt' ], 10000 );
+				add_action( 'wp_enqueue_scripts', array( $this, 'one_tap_scripts' ) );
+				add_action( 'wp_footer', array( $this, 'one_tap_prompt' ), 10000 );
 			}
-			add_action( 'login_enqueue_scripts', [ $this, 'one_tap_scripts' ] );
-			add_action( 'login_footer', [ $this, 'one_tap_prompt' ] );
-			add_action( 'wp_ajax_nopriv_validate_id_token', [ $this, 'validate_token' ] );
-			add_action( 'rtcamp.id_token_verified', [ $this, 'authenticate' ] );
+			add_action( 'login_enqueue_scripts', array( $this, 'one_tap_scripts' ) );
+			add_action( 'login_footer', array( $this, 'one_tap_prompt' ) );
+			add_action( 'wp_ajax_nopriv_validate_id_token', array( $this, 'validate_token' ) );
+			add_action( 'rtcamp.id_token_verified', array( $this, 'authenticate' ) );
 		}
 
 		/**
@@ -135,25 +135,25 @@ class OneTapLogin implements Module {
 		wp_enqueue_script(
 			'login-with-google-one-tap',
 			'https://accounts.google.com/gsi/client',
-			[],
+			array(),
 			filemtime( trailingslashit( plugin()->path ) . 'assets/build/js/onetap.js' ),
 			true
 		);
 
-		$data = [
+		$data = array(
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'state'   => $this->google_client->state(),
 			'homeurl' => get_option( 'home', '' ),
-		];
+		);
 
 		Helper::remove_redirect_state_filter();
 
 		wp_register_script(
 			'login-with-google-one-tap-js',
 			trailingslashit( plugin()->url ) . 'assets/build/js/' . $filename,
-			[
+			array(
 				'wp-i18n',
-			],
+			),
 			filemtime( trailingslashit( plugin()->path ) . 'assets/build/js/onetap.js' ),
 			true
 		);
@@ -206,9 +206,9 @@ class OneTapLogin implements Module {
 			}
 
 			wp_send_json_success(
-				[
+				array(
 					'redirect' => $redirect_to,
-				]
+				)
 			);
 			die;
 

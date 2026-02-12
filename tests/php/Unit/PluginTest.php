@@ -62,36 +62,35 @@ class PluginTest extends TestCase {
 	 */
 	public function testRun() {
 		$this->moduleMock->expects( $this->exactly( 6 ) )
-		                 ->method( 'init' );
+			->method( 'init' );
 
 		$this->containerMock->expects( $this->once() )
-		                    ->method( 'define_services' );
-
+			->method( 'define_services' );
 
 		$this->containerMock->expects( $this->exactly( 6 ) )
-		                    ->method( 'get' )
-		                    ->withAnyParameters()
-		                    ->willReturn( $this->moduleMock );
+			->method( 'get' )
+			->withAnyParameters()
+			->willReturn( $this->moduleMock );
 
 		$this->wpMockFunction(
 			'trailingslashit',
-			[
-				WP_Mock\Functions::type( 'string' )
-			],
+			array(
+				WP_Mock\Functions::type( 'string' ),
+			),
 			3,
 			'slashedstring/'
 		);
 
 		$this->wpMockFunction(
 			'plugin_dir_url',
-			[
-				'slashedstring/login-with-google.php'
-			]
+			array(
+				'slashedstring/login-with-google.php',
+			)
 		);
 
 		$this->wpMockFunction(
 			'plugin_basename',
-			[],
+			array(),
 			1,
 			'login-with-google'
 		);
@@ -108,30 +107,30 @@ class PluginTest extends TestCase {
 	 */
 	public function testPath() {
 		$this->moduleMock->expects( $this->exactly( 6 ) )
-		                 ->method( 'init' );
+			->method( 'init' );
 
 		$this->containerMock->expects( $this->once() )
-		                    ->method( 'define_services' );
+			->method( 'define_services' );
 
 		$this->containerMock->expects( $this->exactly( 6 ) )
-		                    ->method( 'get' )
-		                    ->withAnyParameters()
-		                    ->willReturn( $this->moduleMock );
+			->method( 'get' )
+			->withAnyParameters()
+			->willReturn( $this->moduleMock );
 
 		$this->wpMockFunction(
 			'trailingslashit',
-			[
-				WP_Mock\Functions::type( 'string' )
-			],
+			array(
+				WP_Mock\Functions::type( 'string' ),
+			),
 			3,
 			'slashedstring/'
 		);
 
 		$this->wpMockFunction(
 			'plugin_dir_url',
-			[
-				'slashedstring/login-with-google.php'
-			]
+			array(
+				'slashedstring/login-with-google.php',
+			)
 		);
 
 		$this->testee->run();
@@ -146,29 +145,29 @@ class PluginTest extends TestCase {
 	 */
 	public function testTemplateDirPath() {
 		$this->containerMock->expects( $this->exactly( 6 ) )
-		                    ->method( 'get' )
-		                    ->withAnyParameters()
-		                    ->willReturn( $this->moduleMock );
+			->method( 'get' )
+			->withAnyParameters()
+			->willReturn( $this->moduleMock );
 
 		$this->wpMockFunction(
 			'trailingslashit',
-			[
-				WP_Mock\Functions::type( 'string' )
-			],
+			array(
+				WP_Mock\Functions::type( 'string' ),
+			),
 			3,
 			'slashedstring/'
 		);
 
 		$this->wpMockFunction(
 			'plugin_dir_url',
-			[
-				'slashedstring/login-with-google.php'
-			]
+			array(
+				'slashedstring/login-with-google.php',
+			)
 		);
 
 		$this->wpMockFunction(
 			'plugin_basename',
-			[],
+			array(),
 			1,
 			'login-with-google'
 		);
@@ -185,32 +184,32 @@ class PluginTest extends TestCase {
 	 */
 	public function testPluginURL() {
 		$this->containerMock->expects( $this->exactly( 6 ) )
-		                    ->method( 'get' )
-		                    ->withAnyParameters()
-		                    ->willReturn( $this->moduleMock );
+			->method( 'get' )
+			->withAnyParameters()
+			->willReturn( $this->moduleMock );
 
 		$this->wpMockFunction(
 			'trailingslashit',
-			[
-				WP_Mock\Functions::type( 'string' )
-			],
+			array(
+				WP_Mock\Functions::type( 'string' ),
+			),
 			3,
 			'slashedstring/'
 		);
 
 		WP_Mock::userFunction(
 			'plugin_dir_url',
-			[
-				'args'       => [
-					'slashedstring/login-with-google.php'
-				],
-				'return_arg' => 0
-			]
+			array(
+				'args'       => array(
+					'slashedstring/login-with-google.php',
+				),
+				'return_arg' => 0,
+			)
 		);
 
 		$this->wpMockFunction(
 			'plugin_basename',
-			[],
+			array(),
 			1,
 			'login-with-google'
 		);
@@ -227,24 +226,24 @@ class PluginTest extends TestCase {
 	 */
 	public function testAssetsDirPath() {
 		$this->containerMock->expects( $this->exactly( 6 ) )
-		                    ->method( 'get' )
-		                    ->withAnyParameters()
-		                    ->willReturn( $this->moduleMock );
+			->method( 'get' )
+			->withAnyParameters()
+			->willReturn( $this->moduleMock );
 
 		$this->wpMockFunction(
 			'trailingslashit',
-			[
-				WP_Mock\Functions::type( 'string' )
-			],
+			array(
+				WP_Mock\Functions::type( 'string' ),
+			),
 			3,
 			'slashedstring/'
 		);
 
 		$this->wpMockFunction(
 			'plugin_dir_url',
-			[
-				'slashedstring/login-with-google.php'
-			]
+			array(
+				'slashedstring/login-with-google.php',
+			)
 		);
 
 		$this->testee->run();
@@ -259,35 +258,35 @@ class PluginTest extends TestCase {
 	 */
 	public function testHooksAddedOnRun() {
 		$this->containerMock->expects( $this->exactly( 6 ) )
-		                    ->method( 'get' )
-		                    ->withAnyParameters()
-		                    ->willReturn( $this->moduleMock );
+			->method( 'get' )
+			->withAnyParameters()
+			->willReturn( $this->moduleMock );
 
 		$this->wpMockFunction(
 			'trailingslashit',
-			[
-				WP_Mock\Functions::type( 'string' )
-			],
+			array(
+				WP_Mock\Functions::type( 'string' ),
+			),
 			3,
 			'slashedstring/'
 		);
 
 		$this->wpMockFunction(
 			'plugin_dir_url',
-			[
-				'slashedstring/login-with-google.php'
-			]
+			array(
+				'slashedstring/login-with-google.php',
+			)
 		);
 
 		$this->wpMockFunction(
 			'plugin_basename',
-			[],
+			array(),
 			2,
 			'login-with-google'
 		);
 
-		WP_Mock::expectActionAdded( 'init', [ $this->testee, 'load_translations' ] );
-		WP_Mock::expectActionAdded( 'plugin_action_links_' . plugin_basename( $this->testee->path ) . '/login-with-google.php', [ $this->testee, 'add_plugin_action_links' ] );
+		WP_Mock::expectActionAdded( 'init', array( $this->testee, 'load_translations' ) );
+		WP_Mock::expectActionAdded( 'plugin_action_links_' . plugin_basename( $this->testee->path ) . '/login-with-google.php', array( $this->testee, 'add_plugin_action_links' ) );
 		WP_Mock::expectFilter( 'rtcamp.google_login_modules', $this->testee->active_modules );
 
 		$this->testee->run();
@@ -302,36 +301,36 @@ class PluginTest extends TestCase {
 	public function testLoadTranslation() {
 
 		$this->moduleMock->expects( $this->never() )
-		                 ->method( 'init' );
+			->method( 'init' );
 
 		$this->containerMock->expects( $this->never() )
-		                    ->method( 'define_services' );
+			->method( 'define_services' );
 
 		$this->wpMockFunction(
 			'get_locale',
-			[],
+			array(),
 			1,
 			'en_US'
 		);
 
 		$this->wpMockFunction(
 			'RtCamp\GoogleLogin\plugin',
-			[],
+			array(),
 			1,
 			function () {
-				return (object) [
+				return (object) array(
 					'path' => '/some/utterly/fake/path-to-test/',
-				];
+				);
 			}
 		);
 
 		$this->wpMockFunction(
 			'load_plugin_textdomain',
-			[
+			array(
 				'login-with-google',
 				false,
-				'path-to-test/languages/en_US'
-			]
+				'path-to-test/languages/en_US',
+			)
 		);
 
 		$this->testee->load_translations();
@@ -347,18 +346,18 @@ class PluginTest extends TestCase {
 	public function testSettingPluginActionIsAdded() {
 		$this->wpMockFunction(
 			'admin_url',
-			[
+			array(
 				'options-general.php?page=login-with-google',
-			],
+			),
 			1,
 			'http://example.test/wp-admin/options-general.php?page=login-with-google'
 		);
 
-		$actions = $this->testee->add_plugin_action_links( [] );
+		$actions = $this->testee->add_plugin_action_links( array() );
 
-		print_r($actions);
+		print_r( $actions );
 
-		$this->assertIsArray( $actions, 'Plugin actions should be an array.');
+		$this->assertIsArray( $actions, 'Plugin actions should be an array.' );
 		$this->assertArrayHasKey( 'settings', $actions, 'Setting plugin action should exists.' );
 		$this->assertEquals(
 			'<a href="http://example.test/wp-admin/options-general.php?page=login-with-google">Settings</a>',

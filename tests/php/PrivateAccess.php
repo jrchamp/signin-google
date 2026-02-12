@@ -28,7 +28,7 @@ trait PrivateAccess {
 	 * @return mixed Return value of the method call.
 	 * @throws ReflectionException If the object could not be reflected upon.
 	 */
-	protected function call_private_method( $object, $method_name, $args = [] ) {
+	protected function call_private_method( $object, $method_name, $args = array() ) {
 		$method = ( new ReflectionClass( $object ) )->getMethod( $method_name );
 		$method->setAccessible( true );
 		return $method->invokeArgs( $object, $args );
@@ -43,7 +43,7 @@ trait PrivateAccess {
 	 * @return mixed Return value of the method call.
 	 * @throws ReflectionException If the class could not be reflected upon.
 	 */
-	protected function call_private_static_method( $class, $method_name, $args = [] ) {
+	protected function call_private_static_method( $class, $method_name, $args = array() ) {
 		$method = ( new ReflectionClass( $class ) )->getMethod( $method_name );
 		$method->setAccessible( true );
 		return $method->invokeArgs( null, $args );

@@ -48,7 +48,7 @@ class Assets implements ModuleInterface {
 		/**
 		 * Actions.
 		 */
-		add_action( 'login_enqueue_scripts', [ $this, 'enqueue_login_styles' ] );
+		add_action( 'login_enqueue_scripts', array( $this, 'enqueue_login_styles' ) );
 
 		/**
 		 * Filters.
@@ -99,7 +99,7 @@ class Assets implements ModuleInterface {
 	 *                                     Default 'false'.
 	 * @return bool Whether the script has been registered. True on success, false on failure.
 	 */
-	public function register_script( $handle, $file, $deps = [], $ver = false, $in_footer = true ) {
+	public function register_script( $handle, $file, $deps = array(), $ver = false, $in_footer = true ) {
 		$src     = sprintf( '%1$sassets/%2$s', plugin()->url, $file );
 		$version = $this->get_file_version( $file, $ver );
 
@@ -119,7 +119,7 @@ class Assets implements ModuleInterface {
 	 *
 	 * @return bool Whether the style has been registered. True on success, false on failure.
 	 */
-	public function register_style( $handle, $file, $deps = [], $ver = false, $media = 'all' ) {
+	public function register_style( $handle, $file, $deps = array(), $ver = false, $media = 'all' ) {
 		$src     = sprintf( '%1$sassets/%2$s', plugin()->url, $file );
 		$version = $this->get_file_version( $file, $ver );
 
