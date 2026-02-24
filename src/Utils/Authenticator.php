@@ -59,19 +59,7 @@ class Authenticator {
 		}
 
 		if ( email_exists( $user->email ) ) {
-			$user_wp = get_user_by( 'email', $user->email );
-
-			/**
-			 * Fires once the user has been authenticated.
-			 *
-			 * @since 1.3.0
-			 *
-			 * @param WP_User $user_wp WP User data object.
-			 * @param stdClass $user User data object returned by Google.
-			 */
-			do_action( 'rtcamp.google_user_logged_in', $user_wp, $user );
-
-			return $user_wp;
+			return get_user_by( 'email', $user->email );
 		}
 
 		/**
@@ -80,7 +68,7 @@ class Authenticator {
 		 * @param stdClass $user User object from google.
 		 * @since 1.0.0
 		 */
-		return apply_filters( 'rtcamp.google_register_user', $this->maybe_create_username( $user ) );
+		return $this->register( $this->maybe_create_username( $user ) );
 	}
 
 	/**
@@ -100,8 +88,8 @@ class Authenticator {
 		}
 
 		try {
-			$whitelisted_domains = $this->settings->whitelisted_domains;
-			if ( empty( $whitelisted_domains ) || $this->can_register_with_email( $user->email ) ) {
+			$allowed_domains = $this->settings->allowed_domains;
+			if ( empty( $allowed_domains ) || $this->can_register_with_email( $user->email ) ) {
 				$uid = wp_insert_user(
 					array(
 						'user_login' => Helper::unique_username( $user->login ),
@@ -112,10 +100,8 @@ class Authenticator {
 					)
 				);
 
-				/**
-				 * Fires once the user has been registered successfully.
-				 */
-				do_action( 'rtcamp.google_user_created', $uid, $user );
+				add_user_meta( $uid, 'oauth_user', 1, true );
+				add_user_meta( $uid, 'oauth_provider', 'google', true );
 
 				return get_user_by( 'id', $uid );
 			}
@@ -171,12 +157,12 @@ class Authenticator {
 	 * @return bool
 	 */
 	private function can_register_with_email( string $email ): bool {
-		$whitelisted_domains = explode( ',', $this->settings->whitelisted_domains );
-		$whitelisted_domains = array_map( 'strtolower', $whitelisted_domains );
-		$whitelisted_domains = array_map( 'trim', $whitelisted_domains );
-		$email_parts         = explode( '@', $email );
-		$email_parts         = array_map( 'strtolower', $email_parts );
+		$allowed_domains = explode( ',', $this->settings->allowed_domains );
+		$allowed_domains = array_map( 'strtolower', $allowed_domains );
+		$allowed_domains = array_map( 'trim', $allowed_domains );
+		$email_parts     = explode( '@', $email );
+		$email_parts     = array_map( 'strtolower', $email_parts );
 
-		return in_array( $email_parts[1], $whitelisted_domains, true );
+		return in_array( $email_parts[1], $allowed_domains, true );
 	}
 }

@@ -75,11 +75,11 @@ class TokenVerifier {
 	 * @param string $algo Algorithm.
 	 */
 	public static function get_supported_algorithm( string $algo = '' ) {
-		if ( isset( self::SUPPORTED_ALGORITHMS[ $algo ] ) ) {
-			return self::SUPPORTED_ALGORITHMS[ $algo ];
+		if ( ! isset( self::SUPPORTED_ALGORITHMS[ $algo ] ) ) {
+			$algo = 'RS256';
 		}
 
-		return apply_filters( 'rtcamp.default_algorithm', OPENSSL_ALGO_SHA256, $algo );
+		return self::SUPPORTED_ALGORITHMS[ $algo ];
 	}
 
 	/**
@@ -100,9 +100,6 @@ class TokenVerifier {
 
 			return true;
 		} catch ( Exception $e ) {
-
-			do_action( 'rtcamp.login_with_google_exception', $e );
-
 			throw $e;
 		}
 	}

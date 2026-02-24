@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace RtCamp\GoogleLogin;
 
-use RtCamp\GoogleLogin\Interfaces\Container as ContainerInterface;
+use RtCamp\GoogleLogin\Container;
 
 /**
  * Class Plugin.
@@ -50,13 +50,6 @@ class Plugin {
 	public $template_dir;
 
 	/**
-	 * Assets directory path.
-	 *
-	 * @var string
-	 */
-	public $assets_dir;
-
-	/**
 	 * DI Container.
 	 *
 	 * @var Container
@@ -71,18 +64,14 @@ class Plugin {
 	public $active_modules = array(
 		'settings',
 		'login_flow',
-		'assets',
-		'shortcode',
-		'one_tap_login',
-		'google_login_block',
 	);
 
 	/**
 	 * Plugin constructor.
 	 *
-	 * @param ContainerInterface $container Container instance.
+	 * @param Container $container Container instance.
 	 */
-	public function __construct( ContainerInterface $container ) {
+	public function __construct( Container $container ) {
 		$this->container = $container;
 	}
 
@@ -95,16 +84,6 @@ class Plugin {
 		$this->path         = dirname( __DIR__ );
 		$this->url          = plugin_dir_url( trailingslashit( dirname( __DIR__ ) ) . 'login-with-google.php' );
 		$this->template_dir = trailingslashit( $this->path ) . 'templates/';
-		$this->assets_dir   = trailingslashit( $this->path ) . 'assets/';
-
-		/**
-		 * Filter out active modules before modules are initialized.
-		 *
-		 * @param array $active_modules Active modules list.
-		 *
-		 * @since 1.0.0
-		 */
-		$this->active_modules = apply_filters( 'rtcamp.google_login_modules', $this->active_modules );
 
 		$this->container()->define_services();
 		$this->activate_modules();
@@ -126,9 +105,9 @@ class Plugin {
 	/**
 	 * Return container object
 	 *
-	 * @return ContainerInterface
+	 * @return Container
 	 */
-	public function container(): ContainerInterface {
+	public function container(): Container {
 		return $this->container;
 	}
 

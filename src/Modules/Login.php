@@ -22,7 +22,6 @@ use Exception;
 use RtCamp\GoogleLogin\Utils\Helper;
 use RtCamp\GoogleLogin\Utils\GoogleClient;
 use RtCamp\GoogleLogin\Utils\Authenticator;
-use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
 use function RtCamp\GoogleLogin\plugin;
 
 /**
@@ -30,7 +29,7 @@ use function RtCamp\GoogleLogin\plugin;
  *
  * @package RtCamp\GoogleLogin\Modules
  */
-class Login implements ModuleInterface {
+class Login {
 	/**
 	 * Google client instance.
 	 *
@@ -65,15 +64,6 @@ class Login implements ModuleInterface {
 	}
 
 	/**
-	 * Module name.
-	 *
-	 * @return string
-	 */
-	public function name(): string {
-		return 'login_flow';
-	}
-
-	/**
 	 * Initialize login flow.
 	 *
 	 * @return void
@@ -85,8 +75,6 @@ class Login implements ModuleInterface {
 		add_action( 'login_form', array( $this, 'login_button' ) );
 		// Priority is 20 because of issue: https://core.trac.wordpress.org/ticket/46748.
 		add_action( 'authenticate', array( $this, 'authenticate' ), 20 );
-		add_action( 'rtcamp.google_register_user', array( $this->authenticator, 'register' ) );
-		add_action( 'rtcamp.google_user_created', array( $this, 'user_meta' ) );
 		add_action( 'wp_login', array( $this, 'login_redirect' ) );
 
 		/**
@@ -150,16 +138,6 @@ class Login implements ModuleInterface {
 
 			if ( $user instanceof WP_User ) {
 				$this->authenticated = true;
-
-				/**
-				 * Fires once the user has been authenticated via Google OAuth.
-				 *
-				 * @since 1.3.0
-				 *
-				 * @param WP_User $user WP User object.
-				 */
-				do_action( 'rtcamp.google_user_authenticated', $user );
-
 				return $user;
 			}
 
@@ -168,18 +146,6 @@ class Login implements ModuleInterface {
 		} catch ( Throwable $e ) {
 			return new WP_Error( 'google_login_failed', $e->getMessage() );
 		}
-	}
-
-	/**
-	 * Add extra meta information about user.
-	 *
-	 * @param int $uid  User ID.
-	 *
-	 * @return void
-	 */
-	public function user_meta( int $uid ) {
-		add_user_meta( $uid, 'oauth_user', 1, true );
-		add_user_meta( $uid, 'oauth_provider', 'google', true );
 	}
 
 	/**
@@ -193,7 +159,6 @@ class Login implements ModuleInterface {
 	 * @return string
 	 */
 	public function redirect_url( string $url ): string {
-
 		return remove_query_arg( 'redirect_to', $url );
 	}
 
@@ -212,7 +177,7 @@ class Login implements ModuleInterface {
 		 *
 		 * @param string $admin_url Admin URL address.
 		 */
-		$state['redirect_to'] = $redirect_to ?? apply_filters( 'rtcamp.google_default_redirect', admin_url() );
+		$state['redirect_to'] = $redirect_to ?? admin_url();
 
 		return $state;
 	}

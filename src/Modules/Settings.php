@@ -5,28 +5,23 @@
  *
  * @package RtCamp\GoogleLogin
  * @since 1.0.0
- * @author rtCamp <contact@rtcamp.com>
  */
 
 declare(strict_types=1);
 
 namespace RtCamp\GoogleLogin\Modules;
 
-use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
-
 /**
  * Class Settings.
  *
- * @property string|null whitelisted_domains
+ * @property string|null allowed_domains
  * @property string|null client_id
  * @property string|null client_secret
  * @property bool|null registration_enabled
- * @property bool|null one_tap_login
- * @property string    one_tap_login_screen
  *
  * @package RtCamp\GoogleLogin\Modules
  */
-class Settings implements ModuleInterface {
+class Settings {
 
 	/**
 	 * Settings values.
@@ -41,12 +36,10 @@ class Settings implements ModuleInterface {
 	 * @var string[]
 	 */
 	private $getters = array(
-		'WP_GOOGLE_LOGIN_CLIENT_ID'         => 'client_id',
-		'WP_GOOGLE_LOGIN_SECRET'            => 'client_secret',
-		'WP_GOOGLE_LOGIN_USER_REGISTRATION' => 'registration_enabled',
-		'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS' => 'whitelisted_domains',
-		'WP_GOOGLE_ONE_TAP_LOGIN'           => 'one_tap_login',
-		'WP_GOOGLE_ONE_TAP_LOGIN_SCREEN'    => 'one_tap_login_screen',
+		'client_id' => 'WP_GOOGLE_LOGIN_CLIENT_ID',
+		'client_secret' => 'WP_GOOGLE_LOGIN_SECRET',
+		'registration_enabled' => 'WP_GOOGLE_LOGIN_USER_REGISTRATION',
+		'allowed_domains' => 'WP_GOOGLE_LOGIN_ALLOWED_DOMAINS',
 	);
 
 	/**
@@ -55,22 +48,13 @@ class Settings implements ModuleInterface {
 	 * @param string $name Name of option to fetch.
 	 */
 	public function __get( string $name ) {
-		if ( in_array( $name, $this->getters, true ) ) {
-			$constant_name = array_search( $name, $this->getters, true );
+		if ( isset( $this->getters[ $name ] ) ) {
+			$constant_name = $this->getters[ $name ];
 
 			return defined( $constant_name ) ? constant( $constant_name ) : ( $this->options[ $name ] ?? '' );
 		}
 
 		return null;
-	}
-
-	/**
-	 * Return module name.
-	 *
-	 * @return string
-	 */
-	public function name(): string {
-		return 'settings';
 	}
 
 	/**
@@ -137,30 +121,12 @@ class Settings implements ModuleInterface {
 		);
 
 		add_settings_field(
-			'wp_google_one_tap_login',
-			__( 'Enable One Tap Login', 'login-with-google' ),
-			array( $this, 'one_tap_login' ),
+			'wp_google_allowed_domain',
+			__( 'Allowed Domains', 'login-with-google' ),
+			array( $this, 'allowed_domains' ),
 			'login-with-google',
 			'wp_google_login_section',
-			array( 'label_for' => 'one-tap-login' )
-		);
-
-		add_settings_field(
-			'wp_google_one_tap_login_screen',
-			__( 'One Tap Login Locations', 'login-with-google' ),
-			array( $this, 'one_tap_login_screens' ),
-			'login-with-google',
-			'wp_google_login_section',
-			array( 'label_for' => 'one-tap-login-screen' )
-		);
-
-		add_settings_field(
-			'wp_google_whitelisted_domain',
-			__( 'Whitelisted Domains', 'login-with-google' ),
-			array( $this, 'whitelisted_domains' ),
-			'login-with-google',
-			'wp_google_login_section',
-			array( 'label_for' => 'whitelisted-domains' )
+			array( 'label_for' => 'allowed_domains' )
 		);
 	}
 
@@ -231,74 +197,7 @@ class Settings implements ModuleInterface {
 	}
 
 	/**
-	 * Toggle One Tap Login functionality.
-	 *
-	 * @return void
-	 */
-	public function one_tap_login(): void {
-		?>
-		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'one_tap_login' ); ?>
-					type='checkbox'
-					name='wp_google_login_settings[one_tap_login]'
-					id="one-tap-login" <?php echo esc_attr( checked( $this->one_tap_login ) ); ?>
-					value='1'>
-			<?php esc_html_e( 'One Tap Login', 'login-with-google' ); ?>
-		</label>
-		<p class="<?php echo esc_attr( 'error-message' ); ?>">
-			<?php esc_html_e( 'Warning: One Tap login is more convenient, but it bypasses two-factor authentication (2FA).', 'login-with-google' ); ?>
-		</p>
-		<?php
-	}
-
-	/**
-	 * One tap login screens.
-	 *
-	 * It can be enabled only for wp-login.php OR sitewide.
-	 *
-	 * @return void
-	 */
-	public function one_tap_login_screens(): void {
-		$default = $this->one_tap_login_screen ?? '';
-		?>
-		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'one_tap_login' ); ?>
-					type='radio'
-					name='wp_google_login_settings[one_tap_login_screen]'
-					id="one-tap-login-screen-login" <?php echo esc_attr( checked( $this->one_tap_login_screen, $default ) ); ?>
-					value='login'>
-			<?php esc_html_e( 'Enable One Tap Login Only on Login Screen', 'login-with-google' ); ?>
-		</label>
-		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'one_tap_login' ); ?>
-					type='radio'
-					name='wp_google_login_settings[one_tap_login_screen]'
-					id="one-tap-login-screen-sitewide" <?php echo esc_attr( checked( $this->one_tap_login_screen, 'sitewide' ) ); ?>
-					value='sitewide'>
-			<?php esc_html_e( 'Enable One Tap Login Site-wide', 'login-with-google' ); ?>
-		</label>
-		<?php
-		// phpcs:disable
-		?>
-        <script type="text/javascript">
-            jQuery(document).ready(function () {
-                var toggle = function () {
-                    var enabled = jQuery("#one-tap-login").is(":checked");
-                    var tr_elem = jQuery("#one-tap-login-screen-login").parents("tr");
-                    if (enabled) {
-                        tr_elem.show();
-                        return;
-                    }
-
-                    tr_elem.hide();
-                };
-                jQuery("#one-tap-login").on('change', toggle);
-                toggle();
-            });
-        </script>
-		<?php
-		// phpcs:enable
-	}
-
-	/**
-	 * Whitelisted domains for registration.
+	 * Allowed domains for registration.
 	 *
 	 * Only emails belonging to these domains would be preferred
 	 * for registration.
@@ -307,9 +206,9 @@ class Settings implements ModuleInterface {
 	 *
 	 * @return void
 	 */
-	public function whitelisted_domains(): void {
+	public function allowed_domains(): void {
 		?>
-		<input <?php $this->disabled( 'whitelisted_domains' ); ?> type='text' name='wp_google_login_settings[whitelisted_domains]' id="whitelisted-domains" value='<?php echo esc_attr( $this->whitelisted_domains ); ?>' autocomplete="off" />
+		<input <?php $this->disabled( 'allowed_domains' ); ?> type='text' name='wp_google_login_settings[allowed_domains]' id="allowed_domains" value='<?php echo esc_attr( $this->allowed_domains ); ?>' autocomplete="off" />
 		<p class="description">
 			<?php echo esc_html( __( 'Add each domain comma separated', 'login-with-google' ) ); ?>
 		</p>
@@ -363,7 +262,7 @@ class Settings implements ModuleInterface {
 			return;
 		}
 
-		$constant_name = array_search( $id, $this->getters, true );
+		$constant_name = $this->getters[ $id ] ?? false;
 
 		if ( false !== $constant_name ) {
 			if ( defined( $constant_name ) ) {

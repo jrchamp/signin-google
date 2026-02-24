@@ -198,8 +198,6 @@ class Helper {
 	 * Get the redirection URL and set the redirection URL to the default URL.
 	 *
 	 * This function offers customization to the users for the URL that they want to be redirected to.
-	 * The filter `rtcamp.google_default_redirect` can be used to manipulate the value of $default_redirect_url.
-	 * This way the updated redirection URL customized by the user can be integrated into current system.
 	 *
 	 * @return string
 	 */
@@ -226,49 +224,6 @@ class Helper {
 			}
 		}
 
-		return apply_filters( 'rtcamp.google_default_redirect', $default_redirect_url );
-	}
-
-	/**
-	 * Wrapper function to update the state variable with the redirection url.
-	 *
-	 * @param string $redirect_to Contains the redirection url.
-	 *
-	 * @return void
-	 */
-	public static function set_redirect_state_filter( $redirect_to ) {
-		if ( empty( $redirect_to ) ) {
-			return;
-		}
-
-		self::$redirection_url = $redirect_to;
-
-		add_filter( 'rtcamp.google_login_state', array( __CLASS__, 'update_redirect_state' ) );
-	}
-
-	/**
-	 * Updating the state variable to set the dynamic url.
-	 *
-	 * @param array $state Contains the state array.
-	 *
-	 * @return array
-	 */
-	public static function update_redirect_state( array $state ): array {
-		if ( is_null( self::$redirection_url ) ) {
-			return $state;
-		}
-
-		$state['redirect_to'] = self::$redirection_url;
-
-		return $state;
-	}
-
-	/**
-	 * Removes the filter for state redirection URL updation.
-	 *
-	 * @return void
-	 */
-	public static function remove_redirect_state_filter() {
-		remove_filter( 'rtcamp.google_login_state', array( __CLASS__, 'update_redirect_state' ) );
+		return $default_redirect_url;
 	}
 }

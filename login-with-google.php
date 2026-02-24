@@ -4,7 +4,6 @@
  * Description: Allow users to login/register via Google.
  * Version: 1.4.2
  * Author: rtCamp
- * Author URI: https://rtcamp.com
  * Text Domain: login-with-google
  * Domain Path: /languages
  * License: GPLv2+
@@ -18,8 +17,6 @@
 declare(strict_types=1);
 
 namespace RtCamp\GoogleLogin;
-
-use Pimple\Container as PimpleContainer;
 
 // Prevent direct access.
 defined( 'ABSPATH' ) || exit;
@@ -99,7 +96,7 @@ function container(): Container {
 		return $container;
 	}
 
-	$container = new Container( new PimpleContainer() );
+	$container = new Container();
 
 	return $container;
 }

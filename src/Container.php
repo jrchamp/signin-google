@@ -3,9 +3,6 @@
  * Class Container.
  *
  * This will be useful for creation of object.
- * We are using Pimple DI Container, which will be
- * useful for defining services and serves as service
- * locator.
  *
  * @package RtCamp\GoogleLogin
  * @since 1.0.0
@@ -15,17 +12,11 @@ declare(strict_types=1);
 
 namespace RtCamp\GoogleLogin;
 
-use RtCamp\GoogleLogin\Interfaces\Container as ContainerInterface;
-use Pimple\Container as PimpleContainer;
 use InvalidArgumentException;
-use RtCamp\GoogleLogin\Modules\Assets;
-use RtCamp\GoogleLogin\Modules\Block;
 use RtCamp\GoogleLogin\Modules\Login;
-use RtCamp\GoogleLogin\Modules\OneTapLogin;
 use RtCamp\GoogleLogin\Modules\Settings;
 use RtCamp\GoogleLogin\Utils\Authenticator;
 use RtCamp\GoogleLogin\Utils\GoogleClient;
-use RtCamp\GoogleLogin\Modules\Shortcode;
 use RtCamp\GoogleLogin\Utils\TokenVerifier;
 
 /**
@@ -33,23 +24,7 @@ use RtCamp\GoogleLogin\Utils\TokenVerifier;
  *
  * @package RtCamp\GoogleLogin
  */
-class Container implements ContainerInterface {
-	/**
-	 * Pimple container.
-	 *
-	 * @var PimpleContainer
-	 */
-	public $container;
-
-	/**
-	 * Container constructor.
-	 *
-	 * @param PimpleContainer $container Pimple Container.
-	 */
-	public function __construct( PimpleContainer $container ) {
-		$this->container = $container;
-	}
-
+class Container {
 	/**
 	 * Get the service object.
 	 *
@@ -96,22 +71,18 @@ class Container implements ContainerInterface {
 		/**
 		 * Define the login flow service.
 		 *
-		 * @param PimpleContainer $c Pimple container object.
-		 *
 		 * @return Login
 		 */
-		$this->container['login_flow'] = function ( PimpleContainer $c ) {
+		$this->container['login_flow'] = function ( $c ) {
 			return new Login( $c['gh_client'], $c['authenticator'] );
 		};
 
 		/**
 		 * Define a service for Google OAuth client.
 		 *
-		 * @param PimpleContainer $c Pimple container instance.
-		 *
 		 * @return GoogleClient
 		 */
-		$this->container['gh_client'] = function ( PimpleContainer $c ) {
+		$this->container['gh_client'] = function ( $c ) {
 			$settings = $c['settings'];
 
 			return new GoogleClient(
@@ -124,78 +95,23 @@ class Container implements ContainerInterface {
 		};
 
 		/**
-		 * Define Assets service to add styles or script.
-		 *
-		 * @return Assets
-		 */
-		$this->container['assets'] = function () {
-			return new Assets();
-		};
-
-		/**
-		 * Define Shortcode service to register shortcode for google login.
-		 *
-		 * @param PimpleContainer $c Pimple container object.
-		 *
-		 * @return Shortcode
-		 */
-		$this->container['shortcode'] = function ( PimpleContainer $c ) {
-			return new Shortcode( $c['gh_client'], $c['assets'] );
-		};
-
-		/**
 		 * Define Token Verifier Service.
 		 *
 		 * Useful in verifying JWT Auth token.
 		 *
-		 * @param PimpleContainer $c Pimple container object.
-		 *
 		 * @return TokenVerifier
 		 */
-		$this->container['token_verifier'] = function ( PimpleContainer $c ) {
+		$this->container['token_verifier'] = function ( $c ) {
 			return new TokenVerifier( $c['settings'] );
-		};
-
-		/**
-		 * One Tap Login Service.
-		 *
-		 * @param PimpleContainer $c Pimple container object.
-		 *
-		 * @return OneTapLogin
-		 */
-		$this->container['one_tap_login'] = function ( PimpleContainer $c ) {
-			return new OneTapLogin( $c['settings'], $c['token_verifier'], $c['gh_client'], $c['authenticator'] );
 		};
 
 		/**
 		 * Authenticator utility.
 		 *
-		 * @param PimpleContainer $c Pimple container object.
-		 *
 		 * @return Authenticator
 		 */
-		$this->container['authenticator'] = function ( PimpleContainer $c ) {
+		$this->container['authenticator'] = function ( $c ) {
 			return new Authenticator( $c['settings'] );
 		};
-
-		/**
-		 * Define Block service to add gutenberg block.
-		 *
-		 * @param PimpleContainer $c Pimple container object.
-		 *
-		 * @return Block
-		 */
-		$this->container['google_login_block'] = function ( PimpleContainer $c ) {
-			return new Block( $c['assets'], $c['gh_client'] );
-		};
-
-		/**
-		 * Define any additional services.
-		 *
-		 * @param ContainerInterface $container Container object.
-		 *
-		 * @since 1.0.0
-		 */
-		do_action( 'rtcamp.google_login_services', $this );
 	}
 }
