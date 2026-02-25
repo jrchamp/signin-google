@@ -90,7 +90,7 @@ class Plugin {
 
 		add_action( 'init', array( $this, 'load_translations' ) );
 
-		add_action( 'plugin_action_links_' . plugin_basename( $this->path ) . '/login-with-google.php', array( $this, 'add_plugin_action_links' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( $this->path ) . '/login-with-google.php', array( $this, 'add_plugin_action_links' ) );
 	}
 
 	/**

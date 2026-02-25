@@ -73,13 +73,13 @@ class Login {
 		 * Actions.
 		 */
 		add_action( 'login_form', array( $this, 'login_button' ) );
-		// Priority is 20 because of issue: https://core.trac.wordpress.org/ticket/46748.
-		add_action( 'authenticate', array( $this, 'authenticate' ), 20 );
 		add_action( 'wp_login', array( $this, 'login_redirect' ) );
 
 		/**
 		 * Filters.
 		 */
+		// Priority is 20 because of issue: https://core.trac.wordpress.org/ticket/46748.
+		add_filter( 'authenticate', [ $this, 'authenticate' ], 20 );
 		add_filter( 'rtcamp.google_redirect_url', array( $this, 'redirect_url' ) );
 		add_filter( 'rtcamp.google_login_state', array( $this, 'state_redirect' ) );
 	}
