@@ -46,21 +46,21 @@ class GoogleClient {
 	 *
 	 * @var string
 	 */
-	public $client_id;
+	private $client_id;
 
 	/**
 	 * Client secret.
 	 *
 	 * @var string
 	 */
-	public $client_secret;
+	private $client_secret;
 
 	/**
 	 * Redirect URI.
 	 *
 	 * @var string
 	 */
-	public $redirect_uri;
+	private $redirect_uri;
 
 	/**
 	 * Access token.
@@ -103,18 +103,9 @@ class GoogleClient {
 	 * Set access token.
 	 *
 	 * @param string $code Token.
-	 *
-	 * @return self
-	 * @throws \Throwable Exception for fetching access token.
 	 */
 	public function set_access_token( string $code ): self {
-		try {
-			$this->access_token = $this->access_token( $code )->access_token;
-
-			return $this;
-		} catch ( \Throwable $e ) {
-			throw $e;
-		}
+		$this->access_token = $this->access_token( $code )->access_token;
 	}
 
 	/**
@@ -186,41 +177,33 @@ class GoogleClient {
 	 * Make an API request.
 	 *
 	 * @return \stdClass
-	 * @throws \Throwable Exception during API.
 	 * @throws Exception API Exception.
 	 */
 	public function user(): \stdClass {
-		try {
-			//phpcs:disable WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
-			$user = wp_remote_get(
-				trailingslashit( self::API_BASE ) . 'oauth2/v2/userinfo?access_token=' . $this->access_token,
-				array(
-					'headers' => array(
-						'Accept' => 'application/json',
-					),
-				)
-			);
+		$user = wp_remote_get(
+			trailingslashit( self::API_BASE ) . 'oauth2/v2/userinfo?access_token=' . $this->access_token,
+			array(
+				'headers' => array(
+					'Accept' => 'application/json',
+				),
+			)
+		);
 
-			if ( 200 !== wp_remote_retrieve_response_code( $user ) ) {
-				throw new Exception( esc_html__( 'Could not retrieve the user information, please try again.', 'login-with-google' ) );
-			}
-
-			return json_decode( wp_remote_retrieve_body( $user ) );
-
-		} catch ( \Throwable $e ) {
-
-			throw $e;
+		if ( 200 !== wp_remote_retrieve_response_code( $user ) ) {
+			throw new Exception( esc_html__( 'Could not retrieve the user information, please try again.', 'login-with-google' ) );
 		}
+
+		return json_decode( wp_remote_retrieve_body( $user ) );
 	}
 
 	/**
-	 * State to pass in GH API.
+	 * State to pass to Google API.
 	 *
 	 * @return string
 	 */
 	public function state(): string {
-		$state_data['nonce']    = wp_create_nonce( 'login_with_google' );
 		$state_data             = apply_filters( 'rtcamp.google_login_state', $state_data );
+		$state_data['nonce']    = wp_create_nonce( 'login_with_google' );
 		$state_data['provider'] = 'google';
 
 		return base64_encode( wp_json_encode( $state_data ) );
