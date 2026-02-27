@@ -142,13 +142,6 @@ class Plugin {
 	public $url;
 
 	/**
-	 * Template directory path.
-	 *
-	 * @var string
-	 */
-	public $template_dir;
-
-	/**
 	 * List of active modules.
 	 *
 	 * @var string[]
@@ -164,9 +157,8 @@ class Plugin {
 	 * @return void
 	 */
 	public function run(): void {
-		$this->path         =  __DIR__;
-		$this->url          = plugin_dir_url( trailingslashit( __DIR__ ) . 'login-with-google.php' );
-		$this->template_dir = trailingslashit( $this->path ) . 'templates/';
+		$this->path =  __DIR__;
+		$this->url  = plugin_dir_url( trailingslashit( __DIR__ ) . 'login-with-google.php' );
 
 		$this->activate_modules();
 
