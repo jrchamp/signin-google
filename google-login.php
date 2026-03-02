@@ -145,5 +145,5 @@ $add_plugin_action_links = function ( $actions ) {
 	);
 
 	return array_merge( $new_actions, $actions );
-}
+};
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), $add_plugin_action_links );
