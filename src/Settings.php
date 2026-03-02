@@ -59,22 +59,12 @@ class Settings {
 
 	/**
 	 * Initialization of module.
-	 *
-	 * @return void
 	 */
-	public function init(): void {
+	public function __construct() {
 		$this->options = get_option( 'google_login_settings', array() );
 
-		/**
-		 * Actions.
-		 */
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_menu', array( $this, 'settings_page' ) );
-
-		/**
-		 * Filters.
-		 */
-		// Add filters here.
 	}
 
 	/**

@@ -120,7 +120,7 @@ add_action(
 	100
 );
 
-// Load the plugin translation if available.
+// Load the plugin translation if available (backward compatibility for WordPress before 6.7.0).
 add_action(
 	'init',
 	function () {
@@ -128,22 +128,24 @@ add_action(
 	}
 );
 
-/**
- * Add settings link to plugin actions
- *
- * @param  array $actions Plugin actions.
- * @return array
- */
-$add_plugin_action_links = function ( $actions ) {
-	$new_actions = array(
-		'settings' => sprintf(
-			/* translators: %1$s: Setting name, %2$s: URL for settings page link. */
-			'<a href="%1$s">%2$s</a>',
-			esc_url( admin_url( 'options-general.php?page=google-login' ) ),
-			esc_html__( 'Settings', 'google-login' )
-		),
-	);
+add_filter(
+	'plugin_action_links_' . plugin_basename( __FILE__ ),
+	/**
+	 * Add settings link to plugin actions
+	 *
+	 * @param  array $actions Plugin actions.
+	 * @return array
+	 */
+	function ( $actions ) {
+		$new_actions = array(
+			'settings' => sprintf(
+				/* translators: %1$s: Setting name, %2$s: URL for settings page link. */
+				'<a href="%1$s">%2$s</a>',
+				esc_url( admin_url( 'options-general.php?page=google-login' ) ),
+				esc_html__( 'Settings', 'google-login' )
+			),
+		);
 
-	return array_merge( $new_actions, $actions );
-};
-add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), $add_plugin_action_links );
+		return array_merge( $new_actions, $actions );
+	}
+);

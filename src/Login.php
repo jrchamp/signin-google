@@ -30,19 +30,16 @@ use function GoogleLogin\services;
  */
 class Login {
 	/**
-	 * Flag for determining whether the user has been authenticated
-	 * from plugin.
+	 * Has been authenticated from plugin?
 	 *
 	 * @var bool
 	 */
 	private $authenticated = false;
 
 	/**
-	 * Initialize login flow.
-	 *
-	 * @return void
+	 * Initialize login object.
 	 */
-	public function init(): void {
+	public function __construct() {
 		/**
 		 * Actions.
 		 */
