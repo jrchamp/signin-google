@@ -1,5 +1,5 @@
 === Google Login ===
-Contributors: rtCamp, sh4lin, nikhiljoshua, mchirag2002, mi5t4n
+Contributors: jrchamp, rtCamp, sh4lin, nikhiljoshua, mchirag2002, mi5t4n
 Tags: Google login, sign in, sso, oauth, authentication, sign-in, single sign-on, log in
 Requires at least: 5.5
 Tested up to: 6.9
@@ -27,17 +27,17 @@ Minimal plugin to let your users login to WordPress using their Google accounts.
 3. This will give you **Client ID** and **Secret key**.
 
 
-4. Input these values either in `WP Admin > Settings > WP Google Login`, or in `wp-config.php` using the following code snippet:
+4. Input these values either in `WP Admin > Settings > Google Login`, or in `wp-config.php` using the following code snippet:
 
 ```
-define( 'WP_GOOGLE_LOGIN_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID' );
-define( 'WP_GOOGLE_LOGIN_SECRET', 'YOUR_SECRET_KEY' );
+define( 'GOOGLE_LOGIN_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID' );
+define( 'GOOGLE_LOGIN_SECRET', 'YOUR_SECRET_KEY' );
 ```
 
 ### How to enable automatic user registration
 
 You can enable user registration either by
-- Enabling *Settings > WP Google Login > Enable Google Login Registration*
+- Enabling *Settings > Google Login > Enable Google Login Registration*
 
 
 OR
@@ -45,7 +45,7 @@ OR
 
 - Adding
 ```
-define( 'WP_GOOGLE_LOGIN_USER_REGISTRATION', 'true' );
+define( 'GOOGLE_LOGIN_REGISTRATION', 'true' );
 ```
 in wp-config.php file.
 
@@ -57,42 +57,32 @@ is OFF.
 
 ### Restrict user registration to one or more domain(s)
 
-By default, when you enable user registration via constant `WP_GOOGLE_LOGIN_USER_REGISTRATION` or enable *Settings > WP Google Login > Enable Google Login Registration*, it will create a user for any Google login (including gmail.com users). If you are planning to use this plugin on a private, internal site, then you may like to restrict user registration to users under a single Google Suite organization. This configuration variable does that.
+By default, when you enable user registration via constant `GOOGLE_LOGIN_REGISTRATION` or enable *Settings > Google Login > Enable Google Login Registration*, it will create a user for any Google login (including gmail.com users). If you are planning to use this plugin on a private, internal site, then you may like to restrict user registration to users under a single Google Suite organization. This configuration variable does that.
 
-Add your domain name, without any schema prefix and `www,` as the value of `WP_GOOGLE_LOGIN_ALLOWED_DOMAINS` constant or in the settings `Settings > WP Google Login > Allowed Domains`. You can allow multiple domains. Please separate domains with commas. See the below example to know how to do it via constants:
+Add your domain name, without any schema prefix and `www,` as the value of `GOOGLE_LOGIN_DOMAINS` constant or in the settings `Settings > Google Login > Allowed Domains`. You can allow multiple domains. Please separate domains with commas. See the below example to know how to do it via constants:
 ```
-define( 'WP_GOOGLE_LOGIN_ALLOWED_DOMAINS', 'example.com,sample.com' );
+define( 'GOOGLE_LOGIN_DOMAINS', 'example.com,sample.com' );
 ```
 
-**Note:** If a user already exists, they **will be allowed to login with Google** regardless of whether their domain is allowed or not. Allowing domains will only prevent users from **registering** with email addresses from non-allowed domains.
-
-### Hooks
-
-For a list of all hooks please refer to [this documentation](https://github.com/rtCamp/login-with-google#hooks).
+**Note:** If a user already exists, they **will be allowed to log in with Google** regardless of whether their domain is allowed or not. Allowing domains will only prevent users from **registering** with email addresses from non-allowed domains.
 
 #### wp-config.php parameters list
 
-* `WP_GOOGLE_LOGIN_CLIENT_ID` (string): Google client ID of your application.
-
-
-* `WP_GOOGLE_LOGIN_SECRET` (string): Secret key of your application
-
-
-* `WP_GOOGLE_LOGIN_USER_REGISTRATION` (boolean) (optional): Set `true` If you want to enable new user registration. By default, user registration defers to `Settings > General Settings > Membership` if constant is not set.
-
-
-* `WP_GOOGLE_LOGIN_ALLOWED_DOMAINS` (string) (optional): Domain names, if you want to restrict login with your custom domain. By default, it will allow all domains. You can allow multiple domains.
+* `GOOGLE_LOGIN_CLIENT_ID` (string): Google client ID of your application.
+* `GOOGLE_LOGIN_SECRET` (string): Secret key of your application
+* `GOOGLE_LOGIN_REGISTRATION` (boolean) (optional): Enable new user registration? If not set, inherits from `Settings > General Settings > Membership`.
+* `GOOGLE_LOGIN_DOMAINS` (string) (optional): Comma-separated list of allowed domain names. If empty, all domains are allowed.
 
 == Screenshots ==
 
-1. Login screen with Google option added.
+1. Google Login option added.
 2. Plugin settings screen.
-3. Settings within Google Developer Console.
+3. Google Developer Console settings.
 
 == Changelog ==
 
 = 1.0.0 =
-Forked from rtCamp's Login with Google plugin.
+Forked from rtCamp's Google Login plugin.
 Chore: Documentation update.
 
 == Upgrade Notice ==

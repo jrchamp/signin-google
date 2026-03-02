@@ -1,29 +1,29 @@
 <?php
 /**
- * Plugin Name: Login with Google
- * Description: Allow users to login/register via Google.
+ * Plugin Name: Google Login
+ * Description: Authenticate users with Google.
  * Version: 1.0.0
- * Author: rtCamp
- * Text Domain: login-with-google
+ * Author: Jonathan Champ, rtCamp
+ * Text Domain: google-login
  * Domain Path: /languages
  * License: GPLv2+
  * Requires at least: 5.5
  * Requires PHP: 7.4
  *
- * @package RtCamp\GoogleLogin
+ * @package GoogleLogin
  * @since 1.0.0
  */
 
 declare(strict_types=1);
 
-namespace RtCamp\GoogleLogin;
+namespace GoogleLogin;
 
 use InvalidArgumentException;
-use RtCamp\GoogleLogin\Modules\Login;
-use RtCamp\GoogleLogin\Modules\Settings;
-use RtCamp\GoogleLogin\Utils\Authenticator;
-use RtCamp\GoogleLogin\Utils\GoogleClient;
-use RtCamp\GoogleLogin\Utils\TokenVerifier;
+use GoogleLogin\Modules\Login;
+use GoogleLogin\Modules\Settings;
+use GoogleLogin\Utils\Authenticator;
+use GoogleLogin\Utils\GoogleClient;
+use GoogleLogin\Utils\TokenVerifier;
 
 // Prevent direct access.
 defined( 'ABSPATH' ) || exit;
@@ -43,14 +43,14 @@ if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {
 			function () {
 				$message = __(
 					'Login with google Plugin requires PHP version 7.4 or higher. <br />Please ask your server administrator to update your environment to a newer PHP version',
-					'login-with-google'
+					'google-login'
 				);
 
 				printf(
 					'<div class="notice notice-error"><span class="notice-title">%1$s</span><p>%2$s</p></div>',
 					esc_html__(
 						'The plugin Login with Google has been deactivated',
-						'login-with-google'
+						'google-login'
 					),
 					wp_kses( $message, array( 'br' => true ) )
 				);
@@ -116,7 +116,7 @@ add_action(
 /**
  * Class Plugin.
  *
- * @package RtCamp\GoogleLogin
+ * @package GoogleLogin
  */
 class Plugin {
 
@@ -158,13 +158,13 @@ class Plugin {
 	 */
 	public function run(): void {
 		$this->path = __DIR__;
-		$this->url = plugin_dir_url( trailingslashit( __DIR__ ) . 'login-with-google.php' );
+		$this->url = plugin_dir_url( trailingslashit( __DIR__ ) . 'google-login.php' );
 
 		$this->activate_modules();
 
 		add_action( 'init', array( $this, 'load_translations' ) );
 
-		add_filter( 'plugin_action_links_' . plugin_basename( $this->path ) . '/login-with-google.php', array( $this, 'add_plugin_action_links' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( $this->path ) . '/google-login.php', array( $this, 'add_plugin_action_links' ) );
 	}
 
 	/**
@@ -173,7 +173,7 @@ class Plugin {
 	 * @return void
 	 */
 	public function load_translations(): void {
-		load_plugin_textdomain( 'login-with-google', false, basename( plugin()->path ) . '/languages/' . get_locale() );
+		load_plugin_textdomain( 'google-login', false, basename( plugin()->path ) . '/languages/' . get_locale() );
 	}
 
 	/**
@@ -198,8 +198,8 @@ class Plugin {
 			'settings' => sprintf(
 				/* translators: %1$s: Setting name, %2$s: URL for settings page link. */
 				'<a href="%1$s">%2$s</a>',
-				esc_url( admin_url( 'options-general.php?page=login-with-google' ) ),
-				esc_html__( 'Settings', 'login-with-google' )
+				esc_url( admin_url( 'options-general.php?page=google-login' ) ),
+				esc_html__( 'Settings', 'google-login' )
 			),
 		);
 
@@ -210,7 +210,7 @@ class Plugin {
 /**
  * Class Container
  *
- * @package RtCamp\GoogleLogin
+ * @package GoogleLogin
  */
 class Container {
 	/**
@@ -240,7 +240,7 @@ class Container {
 			 * @return Login
 			 */
 			'login_flow' => function () {
-				return new Login( container()->get( 'gh_client' ), container()->get( 'authenticator' ) );
+				return new Login( container()->get( 'google_client' ), container()->get( 'authenticator' ) );
 			},
 
 			/**
@@ -248,7 +248,7 @@ class Container {
 			 *
 			 * @return GoogleClient
 			 */
-			'gh_client' => function () {
+			'google_client' => function () {
 				$settings = container()->get( 'settings' );
 
 				return new GoogleClient(

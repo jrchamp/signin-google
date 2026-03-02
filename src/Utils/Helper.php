@@ -2,15 +2,15 @@
 /**
  * Helper class for all helper function.
  *
- * This class has been taken from Login with Google plugin.
+ * This class has been taken from Google Login plugin.
  *
- * @package RtCamp\GoogleLogin
+ * @package GoogleLogin
  * @since 1.0.0
  */
 
 declare(strict_types=1);
 
-namespace RtCamp\GoogleLogin\Utils;
+namespace GoogleLogin\Utils;
 
 /**
  * Class Helper

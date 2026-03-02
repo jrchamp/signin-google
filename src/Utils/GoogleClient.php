@@ -4,20 +4,20 @@
  *
  * Useful for authenticating the user and other API related operations.
  *
- * @package RtCamp\GoogleLogin
+ * @package GoogleLogin
  * @since 1.0.0
  */
 
 declare(strict_types=1);
 
-namespace RtCamp\GoogleLogin\Utils;
+namespace GoogleLogin\Utils;
 
 use Exception;
 
 /**
  * Class GoogleClient
  *
- * @package RtCamp\GoogleLogin\Utils
+ * @package GoogleLogin\Utils
  */
 class GoogleClient {
 	/**
@@ -95,7 +95,7 @@ class GoogleClient {
 		);
 
 		if ( in_array( $name, $methods, true ) && empty( $this->access_token ) ) {
-			throw new Exception( esc_html__( 'Access token must be set to make this API call', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'Access token must be set to make this API call', 'google-login' ) );
 		}
 	}
 
@@ -167,7 +167,7 @@ class GoogleClient {
 		);
 
 		if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
-			throw new Exception( esc_html__( 'Could not retrieve the access token, please try again.', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'Could not retrieve the access token, please try again.', 'google-login' ) );
 		}
 
 		return json_decode( wp_remote_retrieve_body( $response ) );
@@ -190,7 +190,7 @@ class GoogleClient {
 		);
 
 		if ( 200 !== wp_remote_retrieve_response_code( $user ) ) {
-			throw new Exception( esc_html__( 'Could not retrieve the user information, please try again.', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'Could not retrieve the user information, please try again.', 'google-login' ) );
 		}
 
 		return json_decode( wp_remote_retrieve_body( $user ) );
@@ -203,7 +203,7 @@ class GoogleClient {
 	 */
 	public function state(): string {
 		$state_data = apply_filters( 'google_login_state', $state_data );
-		$state_data['nonce'] = wp_create_nonce( 'login_with_google' );
+		$state_data['nonce'] = wp_create_nonce( 'google_login' );
 		$state_data['provider'] = 'google';
 
 		return base64_encode( wp_json_encode( $state_data ) );

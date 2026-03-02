@@ -4,23 +4,23 @@
  *
  * This will verify the token based on asymmetric encryption.
  *
- * @package RtCamp\GoogleLogin
- * @since 1.0.16
+ * @package GoogleLogin
+ * @since 1.0.0
  */
 
 declare(strict_types=1);
 
-namespace RtCamp\GoogleLogin\Utils;
+namespace GoogleLogin\Utils;
 
 use Requests_Utility_CaseInsensitiveDictionary;
 use Exception;
-use RtCamp\GoogleLogin\Modules\Settings;
+use GoogleLogin\Modules\Settings;
 use stdClass;
 
 /**
  * Class TokenVerifier
  *
- * @package RtCamp\GoogleLogin\Utils
+ * @package GoogleLogin\Utils
  */
 class TokenVerifier {
 	/**
@@ -198,7 +198,7 @@ class TokenVerifier {
 		$parts = explode( '.', $this->token );
 
 		if ( ! is_array( $parts ) || 3 !== count( $parts ) ) {
-			throw new Exception( esc_html__( 'ID token is invalid', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'ID token is invalid', 'google-login' ) );
 		}
 
 		list( $header, $payload, $obtained_signature ) = $parts;
@@ -206,7 +206,7 @@ class TokenVerifier {
 		$payload = $this->base64_decode_url( $payload );
 
 		if ( ! $header || ! $payload ) {
-			throw new Exception( esc_html__( 'ID token is invalid', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'ID token is invalid', 'google-login' ) );
 		}
 
 		return array(
@@ -235,7 +235,7 @@ class TokenVerifier {
 		);
 
 		if ( ! $parsed_header['kid'] || ! $parsed_header['alg'] ) {
-			throw new Exception( esc_html__( 'Cannot verify the ID token signature. Please try again.', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'Cannot verify the ID token signature. Please try again.', 'google-login' ) );
 		}
 
 		$pubkey_pem = $this->get_public_key( $parsed_header['kid'] );
@@ -249,7 +249,7 @@ class TokenVerifier {
 			return;
 		}
 
-		throw new Exception( esc_html__( 'Cannot verify the ID token signature. Please try again.', 'login-with-google' ) );
+		throw new Exception( esc_html__( 'Cannot verify the ID token signature. Please try again.', 'google-login' ) );
 	}
 
 	/**
@@ -259,19 +259,19 @@ class TokenVerifier {
 	 */
 	private function valid_data(): void {
 		if ( is_null( $this->current_user ) ) {
-			throw new Exception( esc_html__( 'No user present to validate', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'No user present to validate', 'google-login' ) );
 		}
 
 		if ( $this->settings->client_id !== $this->current_user->aud ) {
-			throw new Exception( esc_html__( 'Invalid data found for authentication', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'Invalid data found for authentication', 'google-login' ) );
 		}
 
 		if ( ! in_array( $this->current_user->iss, array( 'accounts.google.com', 'https://accounts.google.com' ), true ) ) {
-			throw new Exception( esc_html__( 'Invalid source found for authentication', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'Invalid source found for authentication', 'google-login' ) );
 		}
 
 		if ( $this->current_user->exp < strtotime( 'now' ) ) {
-			throw new Exception( esc_html__( 'User data is stale! Please try again.', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'User data is stale! Please try again.', 'google-login' ) );
 		}
 	}
 

@@ -6,28 +6,28 @@
  * google login button on wp-login page, authorizing the user,
  * authenticating user and redirecting him to admin.
  *
- * @package RtCamp\GoogleLogin
+ * @package GoogleLogin
  * @since 1.0.0
  */
 
 declare(strict_types=1);
 
-namespace RtCamp\GoogleLogin\Modules;
+namespace GoogleLogin\Modules;
 
 use WP_User;
 use WP_Error;
 use stdClass;
 use Throwable;
 use Exception;
-use RtCamp\GoogleLogin\Utils\Helper;
-use RtCamp\GoogleLogin\Utils\GoogleClient;
-use RtCamp\GoogleLogin\Utils\Authenticator;
-use function RtCamp\GoogleLogin\plugin;
+use GoogleLogin\Utils\Helper;
+use GoogleLogin\Utils\GoogleClient;
+use GoogleLogin\Utils\Authenticator;
+use function GoogleLogin\plugin;
 
 /**
  * Class Login.
  *
- * @package RtCamp\GoogleLogin\Modules
+ * @package GoogleLogin\Modules
  */
 class Login {
 	/**
@@ -35,7 +35,7 @@ class Login {
 	 *
 	 * @var GoogleClient
 	 */
-	private $gh_client;
+	private $google_client;
 
 	/**
 	 * Authenticator instance.
@@ -55,11 +55,11 @@ class Login {
 	/**
 	 * Login constructor.
 	 *
-	 * @param GoogleClient  $client GH Client object.
+	 * @param GoogleClient  $client Google Client object.
 	 * @param Authenticator $authenticator Settings object.
 	 */
 	public function __construct( GoogleClient $client, Authenticator $authenticator ) {
-		$this->gh_client = $client;
+		$this->google_client = $client;
 		$this->authenticator = $authenticator;
 	}
 
@@ -90,25 +90,25 @@ class Login {
 	 * @return void
 	 */
 	public function login_button(): void {
-		$login_url = container()->get( 'gh_client' )->authorization_url();
+		$login_url = container()->get( 'google_client' )->authorization_url();
 
 		if ( empty( $login_url ) ) {
 			return;
 		}
 
 		if ( is_user_logged_in() ) {
-			$button_text = __( 'Log out', 'login-with-google' );
+			$button_text = __( 'Log out', 'google-login' );
 			$button_url = wp_logout_url( Helper::get_redirect_url() );
 		} else {
 			$button_url = $login_url;
-			$button_text = __( 'Login with Google', 'login-with-google' );
+			$button_text = __( 'Log in with Google', 'google-login' );
 		}
 
 		?>
-<div class="wp_google_login">
-	<div class="wp_google_login__button-container">
-		<a class="wp_google_login__button" href="<?php echo esc_url( $button_url ); ?>">
-			<span class="wp_google_login__google-icon"></span>
+<div class="google_login">
+	<div class="google_login__button-container">
+		<a class="google_login__button" href="<?php echo esc_url( $button_url ); ?>">
+			<span class="google_login__google-icon"></span>
 			<?php echo esc_html( $button_text ); ?>
 		</a>
 	</div>
@@ -142,13 +142,13 @@ class Login {
 			return $user;
 		}
 
-		if ( empty( $decoded_state['nonce'] ) || ! wp_verify_nonce( $decoded_state['nonce'], 'login_with_google' ) ) {
+		if ( empty( $decoded_state['nonce'] ) || ! wp_verify_nonce( $decoded_state['nonce'], 'google_login' ) ) {
 			return $user;
 		}
 
 		try {
-			$this->gh_client->set_access_token( $code );
-			$user = $this->gh_client->user();
+			$this->google_client->set_access_token( $code );
+			$user = $this->google_client->user();
 			$user = $this->authenticator->authenticate( $user );
 
 			if ( $user instanceof WP_User ) {
@@ -156,7 +156,7 @@ class Login {
 				return $user;
 			}
 
-			throw new Exception( __( 'Could not authenticate the user, please try again.', 'login-with-google' ) );
+			throw new Exception( __( 'Could not authenticate the user, please try again.', 'google-login' ) );
 
 		} catch ( Throwable $e ) {
 			return new WP_Error( 'google_login_failed', $e->getMessage() );
@@ -213,7 +213,7 @@ class Login {
 		$state = $state ? json_decode( $state ) : null;
 
 		if ( ( $state instanceof stdClass ) && ! empty( $state->provider ) && 'google' === $state->provider && ! empty( $state->redirect_to ) ) {
-			wp_safe_redirect( $state->redirect_to, 302, 'Login with Google' );
+			wp_safe_redirect( $state->redirect_to, 302, 'Log in with Google' );
 			exit;
 		}
 	}

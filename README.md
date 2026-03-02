@@ -1,8 +1,8 @@
-# Login with Google
+# Google Login
 
-> WordPress plugin to login/register with Google
+> WordPress authentication plugin for Google Login
 
-- [Login with Google](#login-with-google)
+- [Google Login](#google-login)
   - [Overview](#overview)
   - [Installation](#installation)
   - [Usage Instructions](#usage-instructions)
@@ -10,7 +10,7 @@
 
 ## Overview
 
-Login with Google provides seamless experience for users to login in to WordPress
+Google Login provides seamless experience for users to login in to WordPress
 sites using their Google account. No need to manually create accounts or remember quirky
 passwords.
 
@@ -26,17 +26,16 @@ passwords.
 2. `Authorization callback URL` should be like `https://example.com/wp-login.php` and the `Authorized JavaScript origins` should be `https://example.com` where
 `https://example.com` is replaced by your site URL.
 3. Once you create the app, you will receive the `Client ID` and `Client Secret`, add these credentials
-in `Settings > Login with Google` settings page in their respective fields.
+in `Settings > Google Login` settings page in their respective fields.
 4. `Create new user` enables new user registration irrespective of `Membership` settings in
    `Settings > General`; as sometimes enabling user registration can lead to lots of spam users.
    Plugin will take this setting as first priority and membership setting as second priority, so if
    any one of them is enabled, new users will be registered by this plugin after successful authorization.
 5. `Allowed Domains` allows users from specific domains (domain in email) to get registered on site.
 This will prevent unwanted registration on website.
-**For Example:** If you want users only from your organization (`example.com`) to get registered on the
-website, you enter `example.com` in allowed domains. Users with Google
-email like `abc@example.com` will be able to register on website. Contrary to this, users with emails like
-`something@gmail.com` would not be able to register here.
+**For Example:** If you want users only from your organization (`example.com`) to get registered on the website,
+you enter `example.com` in allowed domains. Users with an email like `abc@example.com` will be able to register.
+Conversely, users with emails like `something@gmail.com` would not be able to register.
 
 ### Plugin Constants
 
@@ -45,12 +44,12 @@ file.
 
 Refer following list of constants.
 
-|                                   | Type    | Description                                                                                                                                                                 |
-|-----------------------------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| WP_GOOGLE_LOGIN_CLIENT_ID         | String  | Google client ID of your application.                                                                                                                                       |
-| WP_GOOGLE_LOGIN_SECRET            | String  | Secret key of your application                                                                                                                                              |
-| WP_GOOGLE_LOGIN_USER_REGISTRATION | Boolean | (Optional) Set True If you want to enable new user registration. By default, user registration defers to `Settings > General Settings > Membership` if constant is not set. |
-| WP_GOOGLE_LOGIN_ALLOWED_DOMAINS   | String  | (Optional) Domain name, if you want to restrict login with your custom domain. By default, It will allow all domains. You can allow multiple domains.                       |
+|                           | Type    | Description                                                                                                    |
+|---------------------------|---------|----------------------------------------------------------------------------------------------------------------|
+| GOOGLE_LOGIN_CLIENT_ID    | String  | Google client ID of your application.                                                                          |
+| GOOGLE_LOGIN_SECRET       | String  | Secret key of your application                                                                                 |
+| GOOGLE_LOGIN_REGISTRATION | Boolean | (Optional) Enable new user registration? If not set, inherits from `Settings > General Settings > Membership`. |
+| GOOGLE_LOGIN_DOMAINS      | String  | (Optional) Comma-separated list of allowed domain names. If empty, all domains are allowed.                    |
 
 These constants can also be configured via [wp-cli](https://developer.wordpress.org/cli/commands/config/).
 
