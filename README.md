@@ -27,10 +27,9 @@ passwords.
 `https://example.com` is replaced by your site URL.
 3. Once you create the app, you will receive the `Client ID` and `Client Secret`, add these credentials
 in `Settings > Google Login` settings page in their respective fields.
-4. `Create new user` enables new user registration irrespective of `Membership` settings in
+4. `Allow New Users` allows new user registration independent of the `Membership` settings in
    `Settings > General`; as sometimes enabling user registration can lead to lots of spam users.
-   Plugin will take this setting as first priority and membership setting as second priority, so if
-   any one of them is enabled, new users will be registered by this plugin after successful authorization.
+   This setting is the only setting way to allow users to be registered by this plugin.
 5. `Allowed Domains` allows users from specific domains (domain in email) to get registered on site.
 This will prevent unwanted registration on website.
 **For Example:** If you want users only from your organization (`example.com`) to get registered on the website,

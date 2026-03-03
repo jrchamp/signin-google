@@ -49,11 +49,7 @@ define( 'GOOGLE_LOGIN_REGISTRATION', 'true' );
 ```
 in wp-config.php file.
 
-**Note:** If the checkbox is ON then, it will register valid Google users even when WordPress default setting, under
-
-*Settings > General Settings > Membership > Anyone can register* checkbox
-
-is OFF.
+**Note:** If the checkbox is ON then, it will register valid Google users even when the WordPress setting to allow new user registration is OFF.
 
 ### Restrict user registration to one or more domain(s)
 

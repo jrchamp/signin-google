@@ -86,7 +86,7 @@ class Authenticator {
 	 * @throws Exception Registration is off.
 	 */
 	private function register( stdClass $user ): ?WP_User {
-		$register = true === (bool) services( 'settings' )->registration_enabled || (bool) get_option( 'users_can_register', false );
+		$register = (bool) services( 'settings' )->registration_enabled;
 
 		if ( ! $register ) {
 			throw new Exception( esc_html__( 'Registration is not allowed.', 'google-login' ) );

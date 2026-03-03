@@ -54,37 +54,49 @@ class Settings {
 	 * Initialization of module.
 	 */
 	public function __construct() {
-		$this->options = get_option( 'google_login_settings', array() );
+		$this->load_options();
+
+		add_action( 'admin_init', array( $this, 'register_settings' ) );
+
+		if ( is_multisite() ) {
+			add_action(
+				'network_admin_menu',
+				function () {
+					add_submenu_page(
+						'settings.php',
+						__( 'Google Login settings', 'google-login' ),
+						__( 'Google Login', 'google-login' ),
+						'manage_network_options',
+						'google-login',
+						array( $this, 'settings_page' )
+					);
+				}
+			);
+		} else {
+			add_action(
+				'admin_menu',
+				function () {
+					add_options_page(
+						__( 'Google Login settings', 'google-login' ),
+						__( 'Google Login', 'google-login' ),
+						'manage_options',
+						'google-login',
+						array( $this, 'settings_page' )
+					);
+				}
+			);
+		}
+	}
+
+	/**
+	 * Load options.
+	 */
+	private function load_options() {
+		$this->options = get_site_option( 'google_login_settings', array() );
 
 		foreach ( $this->option_overrides as $key => $constant_name ) {
 			$this->options[ $key ] = defined( $constant_name ) ? constant( $constant_name ) : ( $this->options[ $key ] ?? '' );
 		}
-
-		add_action( 'admin_init', array( $this, 'register_settings' ) );
-		add_action(
-			'admin_menu',
-			function () {
-				add_options_page(
-					__( 'Google Login settings', 'google-login' ),
-					__( 'Google Login', 'google-login' ),
-					'manage_options',
-					'google-login',
-					function () {
-						?>
-						<div class="wrap">
-						<form action="options.php" method="post">
-							<?php
-							settings_fields( 'google_login' );
-							do_settings_sections( 'google-login' );
-							submit_button();
-							?>
-						</form>
-						</div>
-						<?php
-					}
-				);
-			}
-		);
 	}
 
 	/**
@@ -124,7 +136,9 @@ class Settings {
 				'description' => 'Google Login settings',
 				'sanitize_callback' => array( $this, 'sanitize_settings' ),
 				'show_in_rest' => false,
-				'default' => array(),
+				'default' => array(
+					'registration_enabled' => (bool) get_site_option( 'users_can_register', false ),
+				),
 			)
 		);
 
@@ -156,7 +170,7 @@ class Settings {
 
 		add_settings_field(
 			'google_login_registration',
-			__( 'Create New User', 'google-login' ),
+			__( 'Allow New Users', 'google-login' ),
 			array( $this, 'user_registration' ),
 			'google-login',
 			'google_login_section',
@@ -202,7 +216,7 @@ class Settings {
 	 * @return void
 	 */
 	public function client_secret_field(): void {
-		if ( defined( $this->option_overrides[ 'client_secret' ] ) ) {
+		if ( defined( $this->option_overrides['client_secret'] ) ) {
 			$client_secret = 'REDACTED';
 		} else {
 			$client_secret = $this->client_secret;
@@ -223,16 +237,16 @@ class Settings {
 			<input type="checkbox" name="google_login_settings[registration_enabled]" id="user-registration" value="1" <?php checked( $this->registration_enabled ); ?> <?php $this->disabled( 'registration_enabled' ); ?> />
 			<?php esc_html_e( 'Allow new account creation?', 'google-login' ); ?>
 		</label>
-		<p class="<?php echo esc_attr( 'error-message' ); ?>">
+		<p>
+		<span class="<?php echo esc_attr( 'notice notice-warning' ); ?>">
 			<?php
 			echo wp_kses_post(
 				sprintf(
-					/* translators: %1s will be replaced by page link */
-					__( 'If this setting is checked, a new user will be created even if <a target="_blank" href="%1s">membership setting</a> is off.', 'google-login' ),
-					is_multisite() ? 'network/settings.php' : 'options-general.php'
+					__( 'Please note: This setting allows new users to be created even if new account registration is disabled.', 'google-login' ),
 				)
 			);
 			?>
+		</span>
 		</p>
 		<?php
 	}
@@ -254,31 +268,33 @@ class Settings {
 	}
 
 	/**
-	 * Add settings sub-menu page in admin menu.
+	 * Render settings page.
 	 *
 	 * @return void
 	 */
 	public function settings_page(): void {
-		add_options_page(
-			__( 'Google Login settings', 'google-login' ),
-			__( 'Google Login', 'google-login' ),
-			'manage_options',
-			'google-login',
-			array( $this, 'output' )
-		);
-	}
+		if ( is_network_admin() && ! empty( $_POST['google_login_settings'] ) ) {
+			check_admin_referer( 'google_login_settings' );
+			if ( current_user_can( 'manage_network_options' )  ) {
+				update_site_option( 'google_login_settings', $this->sanitize_settings( $_POST['google_login_settings'] ) );
+				add_settings_error( 'google_login_settings', 'google_login_updated', __( 'Settings saved.', 'google-login' ), 'updated' );
 
-	/**
-	 * Output the plugin settings.
-	 *
-	 * @return void
-	 */
-	public function output(): void {
+				// Reload options.
+				$this->load_options();
+			}
+		}
 		?>
 		<div class="wrap">
-		<form action='options.php' method='post'>
+		<form method="post">
 			<?php
-			settings_fields( 'google_login' );
+			settings_errors( 'google_login_settings' );
+
+			if ( is_network_admin() ) {
+				wp_nonce_field( 'google_login_settings' );
+			} else {
+				settings_fields( 'google_login' );
+			}
+
 			do_settings_sections( 'google-login' );
 			submit_button();
 			?>
