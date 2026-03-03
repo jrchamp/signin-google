@@ -18,14 +18,12 @@ declare(strict_types=1);
 
 namespace GoogleLogin;
 
-use InvalidArgumentException;
-use GoogleLogin\Authenticator;
-use GoogleLogin\GoogleClient;
-use GoogleLogin\Login;
-use GoogleLogin\Settings;
-
 // Prevent direct access.
 defined( 'ABSPATH' ) || exit;
+
+require_once __DIR__ . '/autoloader.php';
+
+use InvalidArgumentException;
 
 /**
  * PHP 7.4+ is required in order to use the plugin.
