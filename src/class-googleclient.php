@@ -86,7 +86,7 @@ class GoogleClient {
 	 *
 	 * @param string $code Token.
 	 */
-	public function set_access_token( string $code ): self {
+	public function set_access_token( string $code ) {
 		$this->access_token = $this->get_access_token( $code )->access_token;
 	}
 

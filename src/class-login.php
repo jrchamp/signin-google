@@ -19,8 +19,6 @@ use WP_Error;
 use stdClass;
 use Throwable;
 use Exception;
-use GoogleLogin\GoogleClient;
-use GoogleLogin\Authenticator;
 use function GoogleLogin\services;
 
 /**
