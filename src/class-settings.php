@@ -64,7 +64,30 @@ class Settings {
 		$this->options = get_option( 'google_login_settings', array() );
 
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
-		add_action( 'admin_menu', array( $this, 'settings_page' ) );
+		add_action(
+			'admin_menu',
+			function () {
+				add_options_page(
+					__( 'Google Login settings', 'google-login' ),
+					__( 'Google Login', 'google-login' ),
+					'manage_options',
+					'google-login',
+					function () {
+						?>
+						<div class="wrap">
+						<form action="options.php" method="post">
+							<?php
+							settings_fields( 'google_login' );
+							do_settings_sections( 'google-login' );
+							submit_button();
+							?>
+						</form>
+						</div>
+						<?php
+					}
+				);
+			}
+		);
 	}
 
 	/**
@@ -127,18 +150,18 @@ class Settings {
 	 */
 	public function client_id_field(): void {
 		?>
-		<input type='text' name='google_login_settings[client_id]' id="client-id" value='<?php echo esc_attr( $this->client_id ); ?>' autocomplete="off" <?php $this->disabled( 'client_id' ); ?> />
+		<input type="text" name="google_login_settings[client_id]" id="client-id" value="<?php echo esc_attr( $this->client_id ); ?>" autocomplete="off" <?php $this->disabled( 'client_id' ); ?> />
 		<p class="description">
-			<?php
-			echo wp_kses_post(
-				sprintf(
-					'<p>%1s <a target="_blank" href="%2s">%3s</a>.</p>',
-					esc_html__( 'Create oAuth Client ID and Client Secret at', 'google-login' ),
-					'https://console.developers.google.com/apis/dashboard',
-					'console.developers.google.com'
-				)
-			);
-			?>
+		<?php
+		echo wp_kses_post(
+			sprintf(
+				'<p>%1s <a target="_blank" href="%2s">%3s</a>.</p>',
+				esc_html__( 'Create OAuth Client ID and Client Secret at', 'google-login' ),
+				'https://console.developers.google.com/apis/dashboard',
+				'console.developers.google.com'
+			)
+		);
+		?>
 		</p>
 		<?php
 	}
@@ -150,7 +173,7 @@ class Settings {
 	 */
 	public function client_secret_field(): void {
 		?>
-		<input type='password' name='google_login_settings[client_secret]' id="client-secret" value='<?php echo esc_attr( $this->client_secret ); ?>' autocomplete="off" <?php $this->disabled( 'client_secret' ); ?> />
+		<input type="password" name="google_login_settings[client_secret]" id="client-secret" value="<?php echo esc_attr( $this->client_secret ); ?>" autocomplete="off" <?php $this->disabled( 'client_secret' ); ?> />
 		<?php
 	}
 
@@ -166,10 +189,8 @@ class Settings {
 	 */
 	public function user_registration(): void {
 		?>
-		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'registration_enabled' ); ?> type='checkbox'
-															name='google_login_settings[registration_enabled]'
-															id="user-registration" <?php echo esc_attr( checked( $this->registration_enabled ) ); ?>
-															value='1'>
+		<label style="display:block;margin-top:6px;">
+			<input type="checkbox" name="google_login_settings[registration_enabled]" id="user-registration" value="1" <?php checked( $this->registration_enabled ); ?> <?php $this->disabled( 'registration_enabled' ); ?> />
 			<?php esc_html_e( 'Create a new user account if it does not exist already', 'google-login' ); ?>
 		</label>
 		<p class="<?php echo esc_attr( 'error-message' ); ?>">
@@ -198,9 +219,9 @@ class Settings {
 	 */
 	public function allowed_domains(): void {
 		?>
-		<input <?php $this->disabled( 'allowed_domains' ); ?> type='text' name='google_login_settings[allowed_domains]' id="allowed_domains" value='<?php echo esc_attr( $this->allowed_domains ); ?>' autocomplete="off" />
+		<input type="text" name="google_login_settings[allowed_domains]" id="allowed_domains" value="<?php echo esc_attr( $this->allowed_domains ); ?>" autocomplete="off" <?php $this->disabled( 'allowed_domains' ); ?> />
 		<p class="description">
-			<?php echo esc_html( __( 'Add each domain comma separated', 'google-login' ) ); ?>
+			<?php echo esc_html( __( 'Use a comma to separate domains', 'google-login' ) ); ?>
 		</p>
 		<?php
 	}
@@ -240,24 +261,17 @@ class Settings {
 	}
 
 	/**
-	 * Outputs the disabled attribute if field needs to
-	 * be disabled.
+	 * Outputs the disabled attribute if needed.
 	 *
-	 * @param string $id Input ID.
+	 * @param string $field Input field.
 	 *
 	 * @return void
 	 */
-	private function disabled( string $id ): void {
-		if ( empty( $id ) ) {
-			return;
-		}
+	private function disabled( string $field ): void {
+		$constant_name = $this->getters[ $field ] ?? null;
 
-		$constant_name = $this->getters[ $id ] ?? false;
-
-		if ( false !== $constant_name ) {
-			if ( defined( $constant_name ) ) {
-				echo esc_attr( 'disabled="disabled"' );
-			}
+		if ( isset( $constant_name ) && defined( $constant_name ) ) {
+			disabled( true );
 		}
 	}
 }

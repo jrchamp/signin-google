@@ -64,7 +64,7 @@ class Authenticator {
 	 *
 	 * @return string
 	 */
-	public static function unique_username( string $username ): string {
+	private function unique_username( string $username ): string {
 		$uname = $username;
 		$count = 1;
 
@@ -85,7 +85,7 @@ class Authenticator {
 	 * @throws Throwable Invalid email registration.
 	 * @throws Exception Registration is off.
 	 */
-	public function register( stdClass $user ): ?WP_User {
+	private function register( stdClass $user ): ?WP_User {
 		$register = true === (bool) services( 'settings' )->registration_enabled || (bool) get_option( 'users_can_register', false );
 
 		if ( ! $register ) {
@@ -97,7 +97,7 @@ class Authenticator {
 			if ( empty( $allowed_domains ) || $this->can_register_with_email( $user->email ) ) {
 				$uid = wp_insert_user(
 					array(
-						'user_login' => self::unique_username( $user->login ),
+						'user_login' => $this->unique_username( $user->login ),
 						'user_pass'  => wp_generate_password( 18 ),
 						'user_email' => $user->email,
 						'first_name' => $user->given_name ?? '',
@@ -119,19 +119,6 @@ class Authenticator {
 	}
 
 	/**
-	 * Set auth cookies for WordPress login.
-	 *
-	 * @param WP_User $user WP User object.
-	 *
-	 * @return void
-	 */
-	public function set_auth_cookies( WP_User $user ) {
-		wp_clear_auth_cookie();
-		wp_set_current_user( $user->ID, $user->user_login );
-		wp_set_auth_cookie( $user->ID );
-	}
-
-	/**
 	 * Assign the `login` property to user object
 	 * if it doesn't exists.
 	 *
@@ -146,7 +133,7 @@ class Authenticator {
 
 		$email = $user->email;
 		$user_login = sanitize_user( current( explode( '@', $email ) ), true );
-		$user_login = self::unique_username( $user_login );
+		$user_login = $this->unique_username( $user_login );
 		$user->login = $user_login;
 
 		return $user;

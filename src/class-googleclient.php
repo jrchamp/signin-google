@@ -82,25 +82,6 @@ class GoogleClient {
 	}
 
 	/**
-	 * Check if access token is set before calling API methods.
-	 *
-	 * @param string $name Name of method called.
-	 * @param mixed  $args Arguments for method.
-	 *
-	 * @throws Exception Empty access token.
-	 */
-	public function __call( string $name, $args ) {
-		$methods = array(
-			'user',
-			'emails',
-		);
-
-		if ( in_array( $name, $methods, true ) && empty( $this->access_token ) ) {
-			throw new Exception( esc_html__( 'Access token must be set to make this API call', 'google-login' ) );
-		}
-	}
-
-	/**
 	 * Set access token.
 	 *
 	 * @param string $code Token.
@@ -155,7 +136,7 @@ class GoogleClient {
 	 * @return \stdClass
 	 * @throws Exception For access token errors.
 	 */
-	public function get_access_token( string $code ): \stdClass {
+	private function get_access_token( string $code ): \stdClass {
 		$response = wp_remote_post(
 			self::TOKEN_URL,
 			array(
@@ -186,6 +167,10 @@ class GoogleClient {
 	 * @throws Exception API Exception.
 	 */
 	public function user(): \stdClass {
+		if ( empty( $this->access_token ) ) {
+			throw new Exception( esc_html__( 'Access token must be set to make this API call', 'google-login' ) );
+		}
+
 		$user = wp_remote_get(
 			trailingslashit( self::API_BASE ) . 'oauth2/v2/userinfo?access_token=' . $this->access_token,
 			array(
@@ -207,7 +192,7 @@ class GoogleClient {
 	 *
 	 * @return string
 	 */
-	public function state(): string {
+	private function state(): string {
 		$state_data = apply_filters( 'google_login_state', array() );
 		$state_data['nonce'] = wp_create_nonce( 'google_login' );
 		$state_data['provider'] = 'google';

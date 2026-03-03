@@ -62,7 +62,7 @@ class Login {
 	 *
 	 * @return string
 	 */
-	public static function get_redirect_url(): string {
+	private function get_redirect_url(): string {
 		global $pagenow;
 
 		// Initializing the default with admin URL.
@@ -103,7 +103,7 @@ class Login {
 
 		if ( is_user_logged_in() ) {
 			$button_text = __( 'Log out', 'google-login' );
-			$button_url = wp_logout_url( self::get_redirect_url() );
+			$button_url = wp_logout_url( $this->get_redirect_url() );
 		} else {
 			$button_url = $login_url;
 			$button_text = __( 'Log in with Google', 'google-login' );
