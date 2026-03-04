@@ -42,12 +42,12 @@ file.
 
 Refer following list of constants.
 
-|                            | Type    | Description                                                                                                    |
-|----------------------------|---------|----------------------------------------------------------------------------------------------------------------|
-| SIGNIN_GOOGLE_CLIENT_ID    | String  | Google client ID of your application.                                                                          |
-| SIGNIN_GOOGLE_SECRET       | String  | Secret key of your application                                                                                 |
-| SIGNIN_GOOGLE_REGISTRATION | Boolean | (Optional) Enable new user registration? If not set, inherits from `Settings > General Settings > Membership`. |
-| SIGNIN_GOOGLE_DOMAINS      | String  | (Optional) Comma-separated list of allowed domain names. If empty, all domains are allowed.                    |
+|                            | Type    | Description                                                                            |
+|----------------------------|---------|----------------------------------------------------------------------------------------|
+| SIGNIN_GOOGLE_CLIENT_ID    | String  | Google client ID of your application.                                                  |
+| SIGNIN_GOOGLE_SECRET       | String  | Secret key of your application                                                         |
+| SIGNIN_GOOGLE_REGISTRATION | Boolean | (Optional) Enable new user registration?                                               |
+| SIGNIN_GOOGLE_DOMAINS      | String  | (Optional) Comma-separated list of allowed domains. If empty, all domains are allowed. |
 
 These constants can also be configured via [wp-cli](https://developer.wordpress.org/cli/commands/config/).
 

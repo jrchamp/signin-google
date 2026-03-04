@@ -66,7 +66,7 @@ define( 'SIGNIN_GOOGLE_DOMAINS', 'example.com,wordpress.org' );
 
 * `SIGNIN_GOOGLE_CLIENT_ID` (string): Google client ID of your application.
 * `SIGNIN_GOOGLE_SECRET` (string): Secret key of your application
-* `SIGNIN_GOOGLE_REGISTRATION` (boolean) (optional): Enable new user registration? If not set, inherits from `Settings > General Settings > Membership`.
+* `SIGNIN_GOOGLE_REGISTRATION` (boolean) (optional): Enable new user registration?
 * `SIGNIN_GOOGLE_DOMAINS` (string) (optional): Comma-separated list of allowed domain names. If empty, all domains are allowed.
 
 == Screenshots ==

@@ -136,9 +136,7 @@ class Settings {
 				'description' => 'Sign in with Google settings',
 				'sanitize_callback' => array( $this, 'sanitize_settings' ),
 				'show_in_rest' => false,
-				'default' => array(
-					'registration_enabled' => (bool) get_site_option( 'users_can_register', false ),
-				),
+				'default' => array(),
 			)
 		);
 
