@@ -142,7 +142,7 @@ class Login {
 		}
 
 		$state = filter_input( INPUT_GET, 'state', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		$decoded_state = $state ? (array) ( json_decode( base64_decode( $state ) ) ) : null;    // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+		$decoded_state = $state ? (array) ( json_decode( base64_decode( $state ) ) ) : null; // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 
 		if ( ! is_array( $decoded_state ) || empty( $decoded_state['provider'] ) || 'google' !== $decoded_state['provider'] ) {
 			return $user;
@@ -153,8 +153,7 @@ class Login {
 		}
 
 		try {
-			services( 'google_client' )->set_token( $code );
-			$user = services( 'google_client' )->user();
+			$user = services( 'google_client' )->get_user_from_code( $code );
 			$user = services( 'authenticator' )->authenticate( $user );
 
 			if ( $user instanceof WP_User ) {

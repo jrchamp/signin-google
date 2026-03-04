@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace GoogleLogin;
 
 use Exception;
+use stdClass;
 use function GoogleLogin\services;
 
 /**
@@ -57,13 +58,6 @@ class GoogleClient {
 	private $redirect_uri;
 
 	/**
-	 * ID token.
-	 *
-	 * @var string
-	 */
-	private $id_token;
-
-	/**
 	 * GoogleClient constructor.
 	 */
 	public function __construct() {
@@ -72,16 +66,6 @@ class GoogleClient {
 		$this->client_id = $settings->client_id;
 		$this->client_secret = $settings->client_secret;
 		$this->redirect_uri = wp_login_url();
-	}
-
-	/**
-	 * Set token.
-	 *
-	 * @param string $code Token.
-	 */
-	public function set_token( string $code ) {
-		$tokens = $this->get_token( $code );
-		$this->id_token = $tokens->id_token;
 	}
 
 	/**
@@ -127,10 +111,10 @@ class GoogleClient {
 	 *
 	 * @param string $code Response code received during authorization.
 	 *
-	 * @return \stdClass
+	 * @return stdClass
 	 * @throws Exception For token errors.
 	 */
-	private function get_token( string $code ): \stdClass {
+	private function get_token( string $code ): stdClass {
 		$response = wp_remote_post(
 			self::TOKEN_URL,
 			array(
@@ -155,17 +139,20 @@ class GoogleClient {
 	}
 
 	/**
-	 * Build a user object from the token.
+	 * Get a user object from an authorization code.
 	 *
-	 * @return \stdClass
+	 * @param string $code Response code received during authorization.
+	 * @return stdClass
 	 * @throws Exception For token errors.
 	 */
-	public function user(): \stdClass {
-		if ( empty( $this->id_token ) ) {
+	public function get_user_from_code( string $code ): stdClass {
+		$tokens = $this->get_token( $code );
+
+		if ( empty( $tokens->id_token ) ) {
 			throw new Exception( esc_html__( 'Token was not found.', 'google-login' ) );
 		}
 
-		$parts = explode( '.', $this->id_token );
+		$parts = explode( '.', $tokens->id_token );
 
 		if ( count( $parts ) !== 3 ) {
 			throw new Exception( esc_html__( 'Token is invalid.', 'google-login' ) );
