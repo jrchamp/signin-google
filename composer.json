@@ -9,8 +9,10 @@
 	},
 	"require": {},
 	"require-dev" : {
-		"wp-coding-standards/wpcs": "@stable",
-		"phpcompatibility/phpcompatibility-wp": "@stable"
+		"automattic/vipwpcs": "@stable",
+		"phpcompatibility/phpcompatibility-wp": "@stable",
+		"sirbrillig/phpcs-variable-analysis": "@stable",
+		"wp-coding-standards/wpcs": "@stable"
 	},
 	"config": {
 		"allow-plugins": {
