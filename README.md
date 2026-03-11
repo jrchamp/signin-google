@@ -1,12 +1,6 @@
 # Sign in with Google
 
-> WordPress plugin to use Google authentication
-
-- [Sign in with Google](#signin-google)
-  - [Overview](#overview)
-  - [Installation](#installation)
-  - [Usage Instructions](#usage-instructions)
-    - [Plugin Constants](#plugin-constants)
+WordPress authentication plugin so users can Sign in with Google
 
 ## Overview
 

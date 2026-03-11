@@ -7,6 +7,7 @@ Requires PHP: 7.1
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Donate link: https://github.com/sponsors/jrchamp
 
 Minimal plugin that allows WordPress users to log in using Google.
 
@@ -70,6 +71,8 @@ define( 'SIGNIN_GOOGLE_DOMAINS', 'example.com,wordpress.org' );
 1. Sign in with Google option page.
 2. Plugin settings screen.
 3. Google Developer Console settings.
+
+== Frequently Asked Questions ==
 
 == Changelog ==
 
