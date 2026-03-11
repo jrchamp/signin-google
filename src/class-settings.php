@@ -280,9 +280,15 @@ class Settings {
 				$this->load_options();
 			}
 		}
+
+		if ( is_network_admin() ) {
+			$action = '';
+		} else {
+			$action = 'options.php';
+		}
 		?>
 		<div class="wrap">
-		<form method="post">
+		<form action="<?php echo esc_url( $action ); ?>" method="post">
 			<?php
 			settings_errors( 'signin_google_settings' );
 
